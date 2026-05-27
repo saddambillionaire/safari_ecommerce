@@ -2,10 +2,12 @@
   "name": "e-commerce-app",
   "version": "1.0.0",
   "main": "index.js",
-  "engines": {"node": ">=20.0.0"},
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "scripts": {
     "build": "npm install --prefix backend && npm install --prefix admin && npm run build --prefix admin",
-    "start":  "npm run start --prefix backend"
+    "start": "npm run start --prefix backend"
   },
   "repository": {
     "type": "git",
@@ -18,5 +20,10 @@
     "url": "https://github.com/saddambillionaire/safari_ecommerce/issues"
   },
   "homepage": "https://github.com/saddambillionaire/safari_ecommerce#readme",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "mongoose": "^9.6.3"
+  }
 }
