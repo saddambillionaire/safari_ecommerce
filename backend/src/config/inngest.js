@@ -2,25 +2,42 @@
 // import connectDB from "./db.js";
 // import{User} from '../models/user.model.js';
 
+// export const inngestClient = new Inngest({id:'safari_ecommerce'});
 
-// export const inngestClient = new Inngest({id: 'safari_ecommerce'});
+// const syncUser = inngestClient.createFunction(
+//   { id: 'sync-user' },
+//   { event: 'clerk/user.created' },
 
-// const syncUser = inngestClient.createFunction(   
-//     {id: 'sync-user'},
-//     {event: 'clerk/user.created'},
-//     async ({event}) => {
-//         await connectDB();
-//         const {emailAddresses, id, imageUrl, firstName, lastName} = event.data;
-//         const user = {
-//             clerkId:id,
-//              email:emailAddresses[0]?.email, 
-//              imageUrl:imageUrl,
-//              name: `${firstName || ''} ${lastName || ''}`.trim() || 'User',
-//              addresses: [],
-//              wishlist: [],
-//         };
-//         await User.create(user);
-//     }   
+//   async ({ event }) => {
+//     try {
+//       await connectDB();
+
+//       const {
+//         id,
+//         email_addresses,
+//         image_url,
+//         first_name,
+//         last_name,
+//       } = event.data;
+
+//       const user = {
+//         clerkId: id,
+//         email: email_addresses?.[0]?.email_address || '',
+//         imageUrl: image_url || '',
+//         name:
+//           `${first_name || ''} ${last_name || ''}`.trim() || 'User',
+//         addresses: [],
+//         wishlist: [],
+//       };
+
+//       await User.create(user);
+
+//       console.log('User synced successfully');
+//     } catch (error) {
+//       console.error('Error syncing user:', error);
+//       throw error;
+//     }
+//   }
 // );
 
 // const deleteUserFromDB = inngestClient.createFunction(
@@ -33,59 +50,155 @@
 //     }
 // );
 
+// export const functions = [syncUser, deleteUserFromDB];
+
+// import { Inngest } from 'inngest';
+// import connectDB from "./db.js";
+// import { User } from '../models/user.model.js';
+
+// export const inngestClient = new Inngest({
+//   id: 'safari_ecommerce'
+// });
+
+// const syncUser = inngestClient.createFunction(
+//   {
+//     id: 'sync-user',
+//     triggers: [
+//       {
+//         event: 'clerk/user.created',
+//       },
+//     ],
+//   },
+//   async ({ event }) => {
+//     try {
+//       await connectDB();
+
+//       const {
+//         id,
+//         email_addresses,
+//         image_url,
+//         first_name,
+//         last_name,
+//       } = event.data;
+
+//       const user = {
+//         clerkId: id,
+//         email: email_addresses?.[0]?.email_address || '',
+//         imageUrl: image_url || '',
+//         name:
+//           `${first_name || ''} ${last_name || ''}`.trim() || 'User',
+//         addresses: [],
+//         wishlist: [],
+//       };
+
+//       await User.create(user);
+
+//       console.log('User synced successfully');
+//     } catch (error) {
+//       console.error('Error syncing user:', error);
+//       throw error;
+//     }
+//   }
+// );
+
+
+
+// const deleteUserFromDB = inngestClient.createFunction(
+//   {
+//     id: 'delete-user-from-db',
+//     triggers: [
+//       {
+//         event: 'clerk/user.deleted',
+//       },
+//     ],
+//   },
+//   async ({ event }) => {
+//     await connectDB();
+
+//     const { id } = event.data;
+
+//     await User.deleteOne({ clerkId: id });
+//   }
+// );
 
 // export const functions = [syncUser, deleteUserFromDB];
 
 import { Inngest } from 'inngest';
-import connectDB from "./db.js";
+import connectDB from './db.js';
 import { User } from '../models/user.model.js';
 
 export const inngestClient = new Inngest({
-  id: 'safari_ecommerce'
+  id: 'safari_ecommerce',
 });
 
 const syncUser = inngestClient.createFunction(
   {
     id: 'sync-user',
-    triggers: [
-      {
-        event: 'clerk/user.created',
-      },
-    ],
+    trigger: {
+      event: 'clerk/user.created',
+    },
   },
+
   async ({ event }) => {
-    await connectDB();
+    try {
+      await connectDB();
 
-    const { emailAddresses, id, imageUrl, firstName, lastName } = event.data;
+      const {
+        id,
+        email_addresses,
+        image_url,
+        first_name,
+        last_name,
+      } = event.data;
 
-    const user = {
-      clerkId: id,
-      email: emailAddresses[0]?.email,
-      imageUrl: imageUrl,
-      name: `${firstName || ''} ${lastName || ''}`.trim() || 'User',
-      addresses: [],
-      wishlist: [],
-    };
+      const existingUser = await User.findOne({ clerkId: id });
 
-    await User.create(user);
+      if (existingUser) {
+        console.log('User already exists');
+        return;
+      }
+
+      const user = {
+        clerkId: id,
+        email: email_addresses?.[0]?.email_address || '',
+        imageUrl: image_url || '',
+        name:
+          `${first_name || ''} ${last_name || ''}`.trim() || 'User',
+        addresses: [],
+        wishlist: [],
+      };
+
+      await User.create(user);
+
+      console.log('User synced successfully');
+    } catch (error) {
+      console.error('Error syncing user:', error);
+      throw error;
+    }
   }
 );
 
 const deleteUserFromDB = inngestClient.createFunction(
   {
     id: 'delete-user-from-db',
-    triggers: [
-      {
-        event: 'clerk/user.deleted',
-      },
-    ],
+    trigger: {
+      event: 'clerk/user.deleted',
+    },
   },
+
   async ({ event }) => {
-    await connectDB();
+    try {
+      await connectDB();
 
-    const { id } = event.data;
+      const { id } = event.data;
 
-    await User.deleteOne({ clerkId: id });
+      await User.deleteOne({ clerkId: id });
+
+      console.log('User deleted successfully');
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      throw error;
+    }
   }
 );
 
