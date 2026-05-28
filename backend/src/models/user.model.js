@@ -50,12 +50,14 @@ clerkId: {
     unique: true,
 },
 addresses: [addressSchema],
-wishList: [
+wishlist: [
     {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Product',
     },
 ],
-timeStamps: true,
+},
+{
+  timestamps: true,
 });
 export const User = mongoose.model('User', userSchema);
