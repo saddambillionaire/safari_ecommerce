@@ -6,6 +6,17 @@ export const inngestClient = new Inngest({
   id: 'safari_ecommerce'
 });
 
+const syncUser = inngestClient.createFunction(
+  {
+    id: 'sync-user-to-db',  
+    triggers: [
+      {
+        event: 'clerk/user.created',
+      },
+    ],
+  },
+  async ({ event }) => {
+    await connectDB();
 const {
   id,
   email_addresses,
@@ -22,7 +33,7 @@ const user = {
     `${first_name || ''} ${last_name || ''}`.trim() || 'User',
   addresses: [],
   wishlist: [],
-};
+    }}),
 
 const deleteUserFromDB = inngestClient.createFunction(
   {
