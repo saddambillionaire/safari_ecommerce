@@ -1,46 +1,64 @@
-import { Inngest } from 'inngest';
-import connectDB from "./db.js";
-import { User } from '../models/user.model.js';
+// import { Inngest } from 'inngest';
+// import connectDB from "./db.js";
+// import { User } from '../models/user.model.js';
 
-export const inngestClient = new Inngest({
-  id: 'safari_ecommerce'
-});
+// export const inngestClient = new Inngest({
+//   id: 'safari_ecommerce'
+// });
 
-const {
-  id,
-  email_addresses,
-  image_url,
-  first_name,
-  last_name,
-} = event.data;
+// const syncUser = inngestClient.createFunction(
+//   {
+//     id: 'sync-user-to-db',
+//     triggers: [
+//       {
+//         event: 'clerk/user.created',
+//       },
+//     ],
+//   },
+//   async ({ event }) => {
+//     await connectDB();
 
-const user = {
-  clerkId: id,
-  email: email_addresses?.[0]?.email_address || '',
-  imageUrl: image_url || '',
-  name:
-    `${first_name || ''} ${last_name || ''}`.trim() || 'User',
-  addresses: [],
-  wishlist: [],
-};
+//     const {
+//       id,
+//       email_addresses,
+//       image_url,
+//       first_name,
+//       last_name,
+//     } = event.data;
 
-const deleteUserFromDB = inngestClient.createFunction(
-  {
-    id: 'delete-user-from-db',
-    triggers: [
-      {
-        event: 'clerk/user.deleted',
-      },
-    ],
-  },
-  async ({ event }) => {
-    await connectDB();
+//     const user = {
+//       clerkId: id,
+//       email: email_addresses?.[0]?.email_address || '',
+//       imageUrl: image_url || '',
+//       name:
+//         `${first_name || ''} ${last_name || ''}`.trim() || 'User',
+//       addresses: [],
+//       wishlist: [],
+//     };
 
-    const { id } = event.data;
+//     await User.create(user);
 
-    await User.deleteOne({ clerkId: id });
-  }
-);
+//     console.log('User synced successfully');
+//   }
+// );
 
-export const functions = [syncUser, deleteUserFromDB];
+// const deleteUserFromDB = inngestClient.createFunction(
+//   {
+//     id: 'delete-user-from-db',
+//     triggers: [
+//       {
+//         event: 'clerk/user.deleted',
+//       },
+//     ],
+//   },
+//   async ({ event }) => {
+//     await connectDB();
+
+//     const { id } = event.data;
+
+//     await User.deleteOne({ clerkId: id });
+//   }
+// );
+
+// export const functions = [syncUser, deleteUserFromDB];
 
