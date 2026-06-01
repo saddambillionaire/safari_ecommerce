@@ -14,6 +14,11 @@ const syncUser = inngestClient.createFunction(
   async ({ event }) => {
     await connectDB();
 
+    console.log("connected to database");
+
+  console.log(event.data);
+
+
     const {
       id,
       email_addresses,

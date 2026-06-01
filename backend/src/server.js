@@ -10,7 +10,7 @@ const app = express();
 
 const __dirname = path.resolve();
 app.use(express.json());
-app.use(clerkMiddleware()); // Use Clerk middleware for authentication, it adds auth under the request object, req.auth, which contains the user's authentication information.
+
 
 app.use(
   "/api/inngest",
@@ -19,7 +19,7 @@ app.use(
     functions
   })
 );
-
+app.use(clerkMiddleware()); // Use Clerk middleware for authentication, it adds auth under the request object, req.auth, which contains the user's authentication information.
 app.get("/api/health", (req, res) => {
   res.status(200).json({ message: "Server is running! finally i got it" });
 });
