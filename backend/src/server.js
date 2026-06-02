@@ -5,6 +5,7 @@ import { ENV } from "./config/env.js";
 import connectDB from "./config/db.js";
 import { serve } from "inngest/express";
 import { inngestClient, functions } from "./config/inngest.js";
+import adminRoutes from "./routes/admin.route.js";
 
 const app = express();
 
@@ -20,6 +21,9 @@ app.use(
   })
 );
 app.use(clerkMiddleware()); // Use Clerk middleware for authentication, it adds auth under the request object, req.auth, which contains the user's authentication information.
+
+app.use("/api/admin", adminRoutes);
+
 app.get("/api/health", (req, res) => {
   res.status(200).json({ message: "Server is running! finally i got it" });
 });
