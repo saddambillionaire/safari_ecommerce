@@ -6,7 +6,7 @@ import connectDB from "./config/db.js";
 import { serve } from "inngest/express";
 import { inngestClient, functions } from "./config/inngest.js";
 import adminRoutes from "./routes/admin.route.js";
-// import userRoutes from "./routes/user.route.js";
+import userRoutes from "./routes/user.route.js";
 
 const app = express();
 
@@ -22,7 +22,7 @@ app.use(
   })
 );
 app.use("/api/admin", adminRoutes);
-// app.use("/api/users", userRoutes);
+app.use("/api/users", userRoutes);
 
 app.use(clerkMiddleware()); // Use Clerk middleware for authentication, it adds auth under the request object, req.auth, which contains the user's authentication information.
 app.get("/api/health", (req, res) => {
