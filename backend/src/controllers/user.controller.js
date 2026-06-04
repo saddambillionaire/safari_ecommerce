@@ -7,7 +7,7 @@ export async function addAddress(req, res) {
 
     const user = req.user;
 
-    if (!nomComplet || !ville  || !commune || !quartier, avenue, phoneNumber) {
+    if (!nomComplet || !ville  || !commune || !quartier || !avenue || !phoneNumber) {
       return res.status(400).json({ error: "Missing required address fields" });
     }
 
@@ -31,7 +31,7 @@ export async function addAddress(req, res) {
 
     await user.save();
 
-    res.status(201).json({ message: "Address added successfully", addresses: user.addresses });
+    res.status(201).json({ message: "L'addresse est ajouté avec succès", addresses: user.addresses });
   } catch (error) {
     console.error("Error in addAddress controller:", error);
      res.status(500).json({ error: "Erreur Serveur" });
@@ -108,9 +108,9 @@ export async function addToWishlist(req, res) {
     const user = req.user;
 
     // check if product is already in the wishlist
-    if (user.wishlist.includes(productId)) {
-      return res.status(400).json({ error: "Product existe déjà dans la liste d'envies" });
-    }
+       if (!user.wishlist.some((id) => id.equals(productId))) {
+       return res.status(400).json({ error: "Produit introuvable dans la liste d'envies" });
+     }
 
     user.wishlist.push(productId);
     await user.save();
@@ -128,9 +128,9 @@ export async function removeFromWishlist(req, res) {
     const user = req.user;
 
     // check if product is already in the wishlist
-    if (!user.wishlist.includes(productId)) {
-      return res.status(400).json({ error: "Produit introuvable dans la liste d'envies" });
-    }
+       if (!user.wishlist.some((id) => id.equals(productId))) {
+       return res.status(400).json({ error: "Produit introuvable dans la liste d'envies" });
+     }
 
     user.wishlist.pull(productId);
     await user.save();
