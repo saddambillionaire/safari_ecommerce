@@ -5,19 +5,23 @@ const addressSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    street: {
+    ville: {
         type: String,   
         required: true,
     },
-   fullName: {
+   nomComplet: {
         type: String,   
         required: true,     
     },
-    city: {
+    commune: {
         type: String,   
         required: true,
     },
-    state: {
+    quartier: {
+        type: String,   
+        required: true,
+    },
+    avenue: {
         type: String,   
         required: true,
     },
