@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 
 const cartItemSchema = new mongoose.Schema({
+    // this is considered like a foreign key if this was a sql
     productId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Product',
