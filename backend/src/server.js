@@ -17,7 +17,7 @@ const app = express();
 
 const __dirname = path.resolve();
 app.use(express.json());
-app.use(cors({origin: ENV.CLIENT_URL, Credential: true })) 
+app.use(cors({origin: ENV.CLIENT_URL, credentials: true })) 
 
 app.use(
   "/api/inngest",

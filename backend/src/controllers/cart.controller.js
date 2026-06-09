@@ -55,17 +55,19 @@ export async function addToCart(req, res) {
       const user = req.user;
 
       cart = await Cart.create({
-        user: user._id,
+        userId: user._id,
         clerkId: user.clerkId,
         items: [],
       });
     }
 
     // check if item already in the cart
-    const existingItem = cart.items.find((item) => item.product.toString() === productId);
+    const existingItem = cart.items.find((item) => item.productId.toString() === productId);
     if (existingItem) {
-      // increment quantity by 1
-      const newQuantity = existingItem.quantity + 1;
+      // // increment quantity by 1
+      // const newQuantity = existingItem.quantity + 1;
+       // increment quantity by requested amount
+      const newQuantity = existingItem.quantity + quantity;
       if (product.stock < newQuantity) {
         return res.status(400).json({ error: "Stock insuffisant" });
       }
@@ -98,7 +100,7 @@ export async function updateCartItem(req, res) {
       return res.status(404).json({ error: "Charriot introuvable" });
     }
 
-    const itemIndex = cart.items.findIndex((item) => item.product.toString() === productId);
+    const itemIndex = cart.items.findIndex((item) => item.productId.toString() === productId);
     if (itemIndex === -1) {
       return res.status(404).json({ error: "Article indisponible dans le charriot " });
     }
@@ -132,8 +134,8 @@ export async function removeFromCart(req, res) {
       return res.status(404).json({ error: "Charriot introuvable" });
     }
 
-    // Garde uniquement les articles dont l'id est différent
-    cart.items = cart.items.filter((item) => item.product.toString() !== productId);
+    // Garde uniquement les articles dont l'id est différent => suppression
+    cart.items = cart.items.filter((item) => item.productId.toString() !== productId);
     await cart.save();
 
     res.status(200).json({ message: "Article enlevé du charriot", cart });
