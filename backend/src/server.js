@@ -31,7 +31,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/products", productRoutes);
-app.use("/api/product", cartRoutes);
+app.use("/api/cart", cartRoutes);
 
 app.use(clerkMiddleware()); // Use Clerk middleware for authentication, it adds auth under the request object, req.auth, which contains the user's authentication information.
 app.get("/api/health", (req, res) => {

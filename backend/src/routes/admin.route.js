@@ -17,6 +17,6 @@ router.get('/orders', getAllOrders);
 router.patch('/orders/:orderId/status', updateOrderStatus);
 
 router.get('/customers', getAllCustomers);
-router.get("stats", getDashboardStats);
+router.get("/stats", getDashboardStats);
 
 export default router;
