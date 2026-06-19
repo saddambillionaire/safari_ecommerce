@@ -91,13 +91,18 @@ export async function updateProduct(req, res) {
         res.status(500).json({ message: 'Erreur lors de la mise à jour du produit' });
     }
 }
-export async function deleteProduct(req, res) {
-    try {
 
-    } catch (error) {
-        res.status(500).json({ message: 'Erreur lors de la suppression du produit' });
-    }
-}
+// delete product
+export const deleteProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await Product.findByIdAndDelete(id);
+    res.status(200).json({ message: "Product deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting product:", error);
+    res.status(500).json({ message: "Failed to delete product" });
+  }
+};
 
 export async function getAllOrders(_, res) {
     try {

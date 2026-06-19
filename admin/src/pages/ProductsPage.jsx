@@ -121,12 +121,12 @@ function ProductsPage() {
       {/* HEADER */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Products</h1>
-          <p className="text-base-content/70 mt-1">Manage your product inventory</p>
+          <h1 className="text-2xl font-bold">Produits</h1>
+          <p className="text-base-content/70 mt-1">Gérer l'inventaire de ton produit</p>
         </div>
         <button onClick={() => setShowModal(true)} className="btn btn-primary gap-2">
           <PlusIcon className="w-5 h-5" />
-          Add Product
+          Ajouter 
         </button>
       </div>
 
@@ -173,6 +173,18 @@ function ProductsPage() {
                       <PencilIcon className="w-5 h-5" />
                     </button>
                     <button
+  className="btn btn-square btn-ghost text-error"
+  onClick={() => deleteProductMutation.mutate(product._id)}
+  disabled={deleteProductMutation.isPending}
+>
+  {deleteProductMutation.isPending &&
+   deleteProductMutation.variables === product._id ? (
+    <span className="loading loading-spinner"></span>
+  ) : (
+    <Trash2Icon className="w-5 h-5" />
+  )}
+</button>
+                    {/* <button
                       className="btn btn-square btn-ghost text-error"
                       onClick={() => deleteProductMutation.mutate(product._id)}
                     >
@@ -181,7 +193,7 @@ function ProductsPage() {
                       ) : (
                         <Trash2Icon className="w-5 h-5" />
                       )}
-                    </button>
+                    </button> */}
                   </div>
                 </div>
               </div>
@@ -198,7 +210,7 @@ function ProductsPage() {
         <div className="modal-box max-w-2xl">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-bold text-2xl">
-              {editingProduct ? "Edit Product" : "Add New Product"}
+              {editingProduct ? "Modifier" : "Ajouter"}
             </h3>
 
             <button onClick={closeModal} className="btn btn-sm btn-circle btn-ghost">
@@ -343,9 +355,9 @@ function ProductsPage() {
                 {createProductMutation.isPending || updateProductMutation.isPending ? (
                   <span className="loading loading-spinner"></span>
                 ) : editingProduct ? (
-                  "Update Product"
+                  "Modifier"
                 ) : (
-                  "Add Product"
+                  "Ajouter"
                 )}
               </button>
             </div>
