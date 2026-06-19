@@ -184,16 +184,7 @@ function ProductsPage() {
     <Trash2Icon className="w-5 h-5" />
   )}
 </button>
-                    {/* <button
-                      className="btn btn-square btn-ghost text-error"
-                      onClick={() => deleteProductMutation.mutate(product._id)}
-                    >
-                      {deleteProductMutation.isPending ? (
-                        <span className="loading loading-spinner"></span>
-                      ) : (
-                        <Trash2Icon className="w-5 h-5" />
-                      )}
-                    </button> */}
+                   
                   </div>
                 </div>
               </div>

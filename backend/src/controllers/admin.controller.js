@@ -147,13 +147,28 @@ export async function updateOrderStatus(req, res) {
     }   
 }
 
+// export async function getAllCustomers(_, res) {
+//     try {
+//         const customers = await User.find().sort({ createdAt: -1 });
+//         res.status(200).json(customers);
+//     } catch (error) {
+//         res.status(500).json({ message: 'Erreur lors de la récupération des clients' });
+//     }
+// }
 export async function getAllCustomers(_, res) {
-    try {
-        const customers = await User.find().sort({ createdAt: -1 });
-        res.status(200).json(customers);
-    } catch (error) {
-        res.status(500).json({ message: 'Erreur lors de la récupération des clients' });
-    }
+  try {
+    const customers = await User.find().sort({ createdAt: -1 });
+
+    console.log("CUSTOMERS COUNT =", customers.length);
+    console.log("CUSTOMERS =", customers);
+
+    res.status(200).json(customers);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Erreur lors de la récupération des clients",
+    });
+  }
 }
 
 export async function getDashboardStats(_, res) {
