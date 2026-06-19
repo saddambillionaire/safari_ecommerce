@@ -20,8 +20,6 @@ export async function createProduct(req, res) {
         const uploadPromises = req.files.map((file) => {
             return cloudinary.uploader.upload(file.path, {
                 folder: 'products',
-                use_filename: true,
-                unique_filename: false,
             });
         });
         const uploadResults = await Promise.all(uploadPromises);
@@ -53,49 +51,131 @@ export async function getAllProducts(_, res) {
         res.status(500).json({ message: 'Erreur lors de la récupération des produits' });
     }
 }
-
+// update product
 export async function updateProduct(req, res) {
-    try {
-        const { id } = req.params;
-        const { name, description, price, stock, category } = req.body;
+  try {
+    const { id } = req.params;
+    const { name, description, price, stock, category } = req.body;
 
-        const product = await Product.findById(id);     
+    const product = await Product.findById(id);
 
-        if (!product) {
-            return res.status(404).json({ message: 'Produit non trouvé' });
-        }
-        if (name) product.name = name;
-        if (description) product.description = description;
-        if (price) product.price = parseFloat(price);
-        if (stock !== undefined && stock !== null) product.stock = parseInt(stock);
-        if (category) product.category = category;
-
-        // handle image updates if new images are uploaded
-        if (req.files && req.files.length > 0) {
-            if (req.files.length > 3) {
-                return res.status(400).json({ message: 'Maximum 3 images sont autorisées' });
-            }
-            const uploadPromises = req.files.map((file) => {
-                return cloudinary.uploader.upload(file.path, {
-                    folder: 'products'
-                });
-            });
-            const uploadResults = await Promise.all(uploadPromises);
-            product.images = uploadResults.map((result) => result.secure_url);
-        }
-
-        await product.save();
-
-        res.status(200).json(product);
-    } catch (error) {
-        res.status(500).json({ message: 'Erreur lors de la mise à jour du produit' });
+    if (!product) {
+      return res.status(404).json({ message: "Produit non trouvé" });
     }
+
+    // Update basic fields
+    if (name) product.name = name;
+    if (description) product.description = description;
+    if (price) product.price = parseFloat(price);
+    if (stock !== undefined && stock !== null) {
+      product.stock = parseInt(stock);
+    }
+    if (category) product.category = category;
+
+    // Handle image replacement
+    if (req.files && req.files.length > 0) {
+      if (req.files.length > 3) {
+        return res
+          .status(400)
+          .json({ message: "Maximum 3 images sont autorisées" });
+      }
+
+      // DELETE OLD IMAGES FROM CLOUDINARY
+      if (product.images && product.images.length > 0) {
+        const deletePromises = product.images.map((imageUrl) => {
+          const publicId =
+            "products/" + imageUrl.split("/products/")[1]?.split(".")[0];
+
+          if (publicId) {
+            return cloudinary.uploader.destroy(publicId);
+          }
+        });
+
+        await Promise.all(deletePromises.filter(Boolean));
+      }
+
+      // UPLOAD NEW IMAGES
+      const uploadPromises = req.files.map((file) =>
+        cloudinary.uploader.upload(file.path, {
+          folder: "products",
+        })
+      );
+
+      const uploadResults = await Promise.all(uploadPromises);
+
+      product.images = uploadResults.map(
+        (result) => result.secure_url
+      );
+    }
+
+    await product.save();
+
+    res.status(200).json(product);
+  } catch (error) {
+    console.error("UPDATE PRODUCT ERROR:", error);
+    res
+      .status(500)
+      .json({ message: "Erreur lors de la mise à jour du produit" });
+  }
 }
+// export async function updateProduct(req, res) {
+//     try {
+//         const { id } = req.params;
+//         const { name, description, price, stock, category } = req.body;
+
+//         const product = await Product.findById(id);     
+
+//         if (!product) {
+//             return res.status(404).json({ message: 'Produit non trouvé' });
+//         }
+//         if (name) product.name = name;
+//         if (description) product.description = description;
+//         if (price) product.price = parseFloat(price);
+//         if (stock !== undefined && stock !== null) product.stock = parseInt(stock);
+//         if (category) product.category = category;
+
+//         // handle image updates if new images are uploaded
+//         if (req.files && req.files.length > 0) {
+//             if (req.files.length > 3) {
+//                 return res.status(400).json({ message: 'Maximum 3 images sont autorisées' });
+//             }
+//             const uploadPromises = req.files.map((file) => {
+//                 return cloudinary.uploader.upload(file.path, {
+//                     folder: 'products'
+//                 });
+//             });
+//             const uploadResults = await Promise.all(uploadPromises);
+//             product.images = uploadResults.map((result) => result.secure_url);
+//         }
+
+//         await product.save();
+
+//         res.status(200).json(product);
+//     } catch (error) {
+//         res.status(500).json({ message: 'Erreur lors de la mise à jour du produit' });
+//     }
+// }
 
 // delete product
 export const deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
+
+    const product = await Product.findById(id);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    // Delete images from Cloudinary
+    if (product.images && product.images.length > 0) {
+      const deletePromises = product.images.map((imageUrl) => {
+        // Extract public_id from URL (assumes format: .../products/publicId.ext)
+        const publicId = "products/" + imageUrl.split("/products/")[1]?.split(".")[0];
+        if (publicId) return cloudinary.uploader.destroy(publicId);
+      });
+      await Promise.all(deletePromises.filter(Boolean));
+    }
+
     await Product.findByIdAndDelete(id);
     res.status(200).json({ message: "Product deleted successfully" });
   } catch (error) {
