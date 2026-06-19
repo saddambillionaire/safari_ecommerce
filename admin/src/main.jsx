@@ -7,7 +7,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query"; // Rea
 
 import { ClerkProvider } from "@clerk/clerk-react"; // Authentication provider from Clerk
 import { BrowserRouter } from "react-router"; // Enables routing/navigation in the app
-// import * as Sentry from "@sentry/react"; // Error monitoring and session replay tool
+import * as Sentry from "@sentry/react"; // Error monitoring and session replay tool
 
 // Read Clerk publishable key from environment variables
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
@@ -21,24 +21,24 @@ if (!PUBLISHABLE_KEY) {
 const queryClient = new QueryClient();
 
 // // Initialize Sentry monitoring
-// Sentry.init({
-//   dsn: import.meta.env.VITE_SENTRY_DSN, // Project identifier for Sentry
+Sentry.init({
+  dsn: import.meta.env.VITE_SENTRY_DSN, // Project identifier for Sentry
 
-//   // Send extra user-related information (IP, browser data, etc.)
-//   sendDefaultPii: true,
+  // Send extra user-related information (IP, browser data, etc.)
+  sendDefaultPii: true,
 
-//   // Enable Sentry logs
-//   enableLogs: true,
+  // Enable Sentry logs
+  enableLogs: true,
 
-//   // Record user sessions for debugging
-//   integrations: [Sentry.replayIntegration()],
+  // Record user sessions for debugging
+  integrations: [Sentry.replayIntegration()],
 
-//   // Record 100% of user sessions
-//   replaysSessionSampleRate: 1.0,
+  // Record 100% of user sessions
+  replaysSessionSampleRate: 1.0,
 
-//   // Record 100% of sessions that contain errors
-//   replaysOnErrorSampleRate: 1.0,
-// });
+  // Record 100% of sessions that contain errors
+  replaysOnErrorSampleRate: 1.0,
+});
 
 // Render the React application
 createRoot(document.getElementById("root")).render(
