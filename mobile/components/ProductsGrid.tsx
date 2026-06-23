@@ -9,8 +9,8 @@ import {
   ActivityIndicator,
   Alert,
 } from "react-native";
-import useWishlist from "../hooks/useWishlist";
-import useCart from "../hooks/useCart";
+import useWishlist from "@/hooks/useWishlist";
+import useCart from "@/hooks/useCart";
 
 interface ProductsGridProps {
   isLoading: boolean;
