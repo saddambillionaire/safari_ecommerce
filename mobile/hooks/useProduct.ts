@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { useApi } from "@/lib/api";
 import { Product } from "@/types";
+import { useApi } from "@/lib/api";
 
 export const useProduct = (productId: string) => {
   const api = useApi();
