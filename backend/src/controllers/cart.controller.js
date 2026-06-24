@@ -16,7 +16,7 @@ export async function getCart(req, res) {
 
       // Création d'un nouveau panier vide
       cart = await Cart.create({
-        user: user._id,         // Référence MongoDB vers l'utilisateur
+        userId: user._id,         // Référence MongoDB vers l'utilisateur
         clerkId: user.clerkId,  // Identifiant Clerk
         items: [],              // Tableau vide de produits
       });
