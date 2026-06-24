@@ -1,4 +1,3 @@
-import React from "react";
 import { Product } from "@/types";
 import { Ionicons } from "@expo/vector-icons";
 import {
@@ -12,6 +11,7 @@ import {
 } from "react-native";
 import useWishlist from "@/hooks/useWishlist";
 import useCart from "@/hooks/useCart";
+import React from "react";
 
 interface ProductsGridProps {
   isLoading: boolean;
@@ -25,7 +25,6 @@ const ProductsGrid = ({ products, isLoading, isError }: ProductsGridProps) => {
     toggleWishlist,
     isAddingToWishlist,
     isRemovingFromWishlist,
-    wishlistLoadingProductId,
   } = useWishlist();
 
   const { isAddingToCart, addToCart } = useCart();
@@ -35,12 +34,13 @@ const ProductsGrid = ({ products, isLoading, isError }: ProductsGridProps) => {
       { productId, quantity: 1 },
       {
         onSuccess: () => {
-          Alert.alert("Succès", `${productName} ajouté au panier`);
+          Alert.alert("Success", `${productName} added to cart!`);
         },
         onError: (error: any) => {
           Alert.alert(
-            "Erreur",
-            error?.response?.data?.error || "Échec lors de l'ajout au panier",
+            "Error",
+            error?.response?.data?.error ||
+              "Echec survenu lors de l'ajout au charriot",
           );
         },
       },
@@ -48,9 +48,7 @@ const ProductsGrid = ({ products, isLoading, isError }: ProductsGridProps) => {
   };
 
   const renderProduct = ({ item: product }: { item: Product }) => {
-    const isWishlistLoading =
-      wishlistLoadingProductId === product._id &&
-      (isAddingToWishlist || isRemovingFromWishlist);
+    const isAdding = isAddingToCart(product._id);
 
     return (
       <TouchableOpacity
@@ -58,6 +56,7 @@ const ProductsGrid = ({ products, isLoading, isError }: ProductsGridProps) => {
         style={{ width: "48%" }}
         activeOpacity={0.8}
       >
+        {/* IMAGE */}
         <View className="relative">
           <Image
             source={{
@@ -67,24 +66,30 @@ const ProductsGrid = ({ products, isLoading, isError }: ProductsGridProps) => {
             resizeMode="cover"
           />
 
+          {/* WISHLIST BUTTON */}
           <TouchableOpacity
             className="absolute top-3 right-3 bg-black/30 p-2 rounded-full"
             activeOpacity={0.7}
             onPress={() => toggleWishlist(product._id)}
-            disabled={isWishlistLoading}
+            disabled={isAddingToWishlist || isRemovingFromWishlist}
           >
-            {isWishlistLoading ? (
+            {isAddingToWishlist || isRemovingFromWishlist ? (
               <ActivityIndicator size="small" color="#FFFFFF" />
             ) : (
               <Ionicons
                 name={isInWishlist(product._id) ? "heart" : "heart-outline"}
                 size={18}
-                color={isInWishlist(product._id) ? "#1DB954" : "#FFFFFF"}
+                color={
+                  isInWishlist(product._id)
+                    ? "#1DB954" // Spotify green
+                    : "#FFFFFF"
+                }
               />
             )}
           </TouchableOpacity>
         </View>
 
+        {/* DETAILS */}
         <View className="p-3">
           <Text className="text-text-secondary text-xs mb-1">
             {product.category}
@@ -99,28 +104,29 @@ const ProductsGrid = ({ products, isLoading, isError }: ProductsGridProps) => {
 
           <View className="flex-row items-center mb-2">
             <Ionicons name="star" size={12} color="#FFC107" />
-
             <Text className="text-text-primary text-xs font-semibold ml-1">
               {product.averageRating.toFixed(1)}
             </Text>
-
             <Text className="text-text-secondary text-xs ml-1">
               ({product.totalReviews})
             </Text>
           </View>
 
+          {/* PRICE + CART */}
           <View className="flex-row items-center justify-between">
             <Text className="text-primary font-bold text-lg">
-              ${product.price.toFixed(2)}
+              <Text className="text-primary font-bold text-lg">
+                ${product.price ? product.price.toFixed(2) : "0.00"}
+              </Text>
             </Text>
 
             <TouchableOpacity
               className="bg-primary rounded-full w-8 h-8 items-center justify-center"
               activeOpacity={0.7}
               onPress={() => handleAddToCart(product._id, product.name)}
-              disabled={isAddingToCart}
+              disabled={isAdding}
             >
-              {isAddingToCart ? (
+              {isAdding ? (
                 <ActivityIndicator size="small" color="#121212" />
               ) : (
                 <Ionicons name="add" size={18} color="#121212" />
@@ -147,11 +153,9 @@ const ProductsGrid = ({ products, isLoading, isError }: ProductsGridProps) => {
     return (
       <View className="py-20 items-center justify-center">
         <Ionicons name="alert-circle-outline" size={48} color="#FF6B6B" />
-
         <Text className="text-text-primary font-semibold mt-4">
-          Échec du chargement des produits
+          Echec de chargement des produits
         </Text>
-
         <Text className="text-text-secondary text-sm mt-2">
           Veuillez réessayer plus tard
         </Text>
@@ -181,11 +185,9 @@ function NoProductsFound() {
   return (
     <View className="py-20 items-center justify-center">
       <Ionicons name="search-outline" size={48} color="#666" />
-
       <Text className="text-text-primary font-semibold mt-4">
         Pas de produits trouvés
       </Text>
-
       <Text className="text-text-secondary text-sm mt-2">
         Réessayez votre filtre des produits
       </Text>
