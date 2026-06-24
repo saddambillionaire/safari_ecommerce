@@ -143,14 +143,9 @@ export async function removeFromWishlist(req, res) {
 }
 
 export async function getWishlist(req, res) {
-  console.log("GET WISHLIST CALLED");
   try {
     // we're using populate because wishlist is just an array of product ids
     const user = await User.findById(req.user._id).populate("wishlist");
-    console.log(
-      "wishlist first item:",
-      user.wishlist[0]
-    );
     res.status(200).json({ wishlist: user.wishlist });
   } catch (error) {
     console.error("Error in getWishlist controller:", error);

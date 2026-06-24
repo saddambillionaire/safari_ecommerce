@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { useApi } from "@/lib/api";
 import { Product } from "@/types";
 
@@ -6,63 +11,102 @@ const useWishlist = () => {
   const api = useApi();
   const queryClient = useQueryClient();
 
+  const [wishlistLoadingProductId, setWishlistLoadingProductId] =
+    useState<string | null>(null);
+
   const {
-    data: wishlist,
+    data: wishlist = [],
     isLoading,
     isError,
-  } = useQuery({
+  } = useQuery<Product[]>({
     queryKey: ["wishlist"],
     queryFn: async () => {
-      console.log("REQUESTING WISHLIST");
-      const { data } = await api.get<{ wishlist: Product[] }>("/users/wishlist");
-      // return data.wishlist;
-      console.log("wishlist response:", data);
+      const { data } = await api.get<{
+        wishlist: Product[];
+      }>("/users/wishlist");
+
       return data.wishlist ?? [];
     },
   });
 
   const addToWishlistMutation = useMutation({
     mutationFn: async (productId: string) => {
-      const { data } = await api.post<{ wishlist: string[] }>("/users/wishlist", { productId });
+      const { data } = await api.post<{
+        wishlist: string[];
+      }>("/users/wishlist", { productId });
+
       return data.wishlist;
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["wishlist"] }),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["wishlist"],
+      });
+    },
   });
 
   const removeFromWishlistMutation = useMutation({
     mutationFn: async (productId: string) => {
-      const { data } = await api.delete<{ wishlist: string[] }>(`/users/wishlist/${productId}`);
+      const { data } = await api.delete<{
+        wishlist: string[];
+      }>(`/users/wishlist/${productId}`);
+
       return data.wishlist;
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["wishlist"] }),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["wishlist"],
+      });
+    },
   });
 
   const isInWishlist = (productId: string) => {
-     console.log("isInwishlistContent =", wishlist);
-  console.log("checking =", productId);
-    return wishlist?.some((product) => product._id === productId) ?? false;
+    return wishlist.some(
+      (product) => product._id === productId
+    );
   };
 
   const toggleWishlist = (productId: string) => {
+    setWishlistLoadingProductId(productId);
+
     if (isInWishlist(productId)) {
-      removeFromWishlistMutation.mutate(productId);
+      removeFromWishlistMutation.mutate(productId, {
+        onSettled: () => {
+          setWishlistLoadingProductId(null);
+        },
+      });
     } else {
-      addToWishlistMutation.mutate(productId);
+      addToWishlistMutation.mutate(productId, {
+        onSettled: () => {
+          setWishlistLoadingProductId(null);
+        },
+      });
     }
   };
 
   return {
-    wishlist: wishlist || [],
+    wishlist,
     isLoading,
     isError,
-    wishlistCount: wishlist?.length || 0,
+
+    wishlistCount: wishlist.length,
+
     isInWishlist,
     toggleWishlist,
+
     addToWishlist: addToWishlistMutation.mutate,
     removeFromWishlist: removeFromWishlistMutation.mutate,
-    isAddingToWishlist: addToWishlistMutation.isPending,
-    isRemovingFromWishlist: removeFromWishlistMutation.isPending,
+
+    isAddingToWishlist:
+      addToWishlistMutation.isPending,
+
+    isRemovingFromWishlist:
+      removeFromWishlistMutation.isPending,
+
+    wishlistLoadingProductId,
   };
 };
 
 export default useWishlist;
+
