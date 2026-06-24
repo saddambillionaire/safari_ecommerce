@@ -109,7 +109,7 @@ export async function addToWishlist(req, res) {
 
     // check if product is already in the wishlist
     if (user.wishlist.includes(productId)) {
-      return res.status(400).json({ error: "Product existe déjà dans la liste d'envies" });
+      return res.status(400).json({ error: "Produit existe déjà dans la liste d'envies" });
     }
 
     user.wishlist.push(productId);

@@ -7,11 +7,13 @@ import {
   TouchableOpacity,
   TextInput,
   Image,
+  Button,
 } from "react-native";
 import ProductsGrid from "@/components/ProductsGrid";
 import useProducts from "@/hooks/useProducts";
 import React from "react";
 import SafeScreen from "@/components/SafeScreen";
+import * as Sentry from "@sentry/react-native";
 
 const CATEGORIES = [
   { name: "All", icon: "grid-outline" as const },

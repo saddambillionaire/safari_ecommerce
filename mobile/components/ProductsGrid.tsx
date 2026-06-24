@@ -20,27 +20,27 @@ interface ProductsGridProps {
 }
 
 const ProductsGrid = ({ products, isLoading, isError }: ProductsGridProps) => {
-  const {
-    isInWishlist,
-    toggleWishlist,
-    isAddingToWishlist,
-    isRemovingFromWishlist,
-  } = useWishlist();
+  const { isInWishlist, toggleWishlist, isWishlistLoading } = useWishlist();
 
-  const { isAddingToCart, addToCart } = useCart();
+  const { addToCart, isAddingToCart } = useCart();
 
   const handleAddToCart = (productId: string, productName: string) => {
     addToCart(
-      { productId, quantity: 1 },
+      {
+        productId,
+        quantity: 1,
+      },
       {
         onSuccess: () => {
-          Alert.alert("Success", `${productName} added to cart!`);
+          Alert.alert("Succès", `${productName} ajouté au panier`);
         },
+
         onError: (error: any) => {
+          console.log("ADD TO CART ERROR:", error?.response?.data);
+
           Alert.alert(
-            "Error",
-            error?.response?.data?.error ||
-              "Echec survenu lors de l'ajout au charriot",
+            "Erreur",
+            error?.response?.data?.error || "Échec lors de l'ajout au panier",
           );
         },
       },
@@ -49,6 +49,8 @@ const ProductsGrid = ({ products, isLoading, isError }: ProductsGridProps) => {
 
   const renderProduct = ({ item: product }: { item: Product }) => {
     const isAdding = isAddingToCart(product._id);
+
+    const wishlistLoading = isWishlistLoading(product._id);
 
     return (
       <TouchableOpacity
@@ -66,24 +68,20 @@ const ProductsGrid = ({ products, isLoading, isError }: ProductsGridProps) => {
             resizeMode="cover"
           />
 
-          {/* WISHLIST BUTTON */}
+          {/* WISHLIST */}
           <TouchableOpacity
             className="absolute top-3 right-3 bg-black/30 p-2 rounded-full"
             activeOpacity={0.7}
             onPress={() => toggleWishlist(product._id)}
-            disabled={isAddingToWishlist || isRemovingFromWishlist}
+            disabled={wishlistLoading}
           >
-            {isAddingToWishlist || isRemovingFromWishlist ? (
+            {wishlistLoading ? (
               <ActivityIndicator size="small" color="#FFFFFF" />
             ) : (
               <Ionicons
                 name={isInWishlist(product._id) ? "heart" : "heart-outline"}
                 size={18}
-                color={
-                  isInWishlist(product._id)
-                    ? "#1DB954" // Spotify green
-                    : "#FFFFFF"
-                }
+                color={isInWishlist(product._id) ? "#1DB954" : "#FFFFFF"}
               />
             )}
           </TouchableOpacity>
@@ -104,20 +102,23 @@ const ProductsGrid = ({ products, isLoading, isError }: ProductsGridProps) => {
 
           <View className="flex-row items-center mb-2">
             <Ionicons name="star" size={12} color="#FFC107" />
+
             <Text className="text-text-primary text-xs font-semibold ml-1">
-              {product.averageRating.toFixed(1)}
+              {product.averageRating?.toFixed(1) ?? "0.0"}
             </Text>
+
             <Text className="text-text-secondary text-xs ml-1">
-              ({product.totalReviews})
+              ({product.totalReviews ?? 0})
             </Text>
           </View>
 
           {/* PRICE + CART */}
           <View className="flex-row items-center justify-between">
             <Text className="text-primary font-bold text-lg">
-              <Text className="text-primary font-bold text-lg">
-                ${product.price ? product.price.toFixed(2) : "0.00"}
-              </Text>
+              $
+              {typeof product.price === "number"
+                ? product.price.toFixed(2)
+                : "0.00"}
             </Text>
 
             <TouchableOpacity
@@ -142,6 +143,7 @@ const ProductsGrid = ({ products, isLoading, isError }: ProductsGridProps) => {
     return (
       <View className="py-20 items-center justify-center">
         <ActivityIndicator size="large" color="#121212" />
+
         <Text className="text-text-secondary mt-4">
           Chargement des produits...
         </Text>
@@ -153,9 +155,11 @@ const ProductsGrid = ({ products, isLoading, isError }: ProductsGridProps) => {
     return (
       <View className="py-20 items-center justify-center">
         <Ionicons name="alert-circle-outline" size={48} color="#FF6B6B" />
+
         <Text className="text-text-primary font-semibold mt-4">
-          Echec de chargement des produits
+          Échec du chargement des produits
         </Text>
+
         <Text className="text-text-secondary text-sm mt-2">
           Veuillez réessayer plus tard
         </Text>
@@ -185,9 +189,11 @@ function NoProductsFound() {
   return (
     <View className="py-20 items-center justify-center">
       <Ionicons name="search-outline" size={48} color="#666" />
+
       <Text className="text-text-primary font-semibold mt-4">
         Pas de produits trouvés
       </Text>
+
       <Text className="text-text-secondary text-sm mt-2">
         Réessayez votre filtre des produits
       </Text>
