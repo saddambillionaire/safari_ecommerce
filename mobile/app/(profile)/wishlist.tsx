@@ -14,6 +14,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import ErrorUI from "@/components/ErrorUI";
+import LoadingUI from "@/components/LoadingUI";
 
 function WishlistScreen() {
   const {
@@ -61,7 +63,7 @@ function WishlistScreen() {
           setFeedbackModal({
             visible: true,
             title: "Succès",
-            message: `${productName} ajouté au charriot!`,
+            message: `${productName} ajouté au charriot !`,
             type: "success",
           });
         },
@@ -80,7 +82,7 @@ function WishlistScreen() {
   };
 
   if (isLoading) return <LoadingUI />;
-  if (isError) return <ErrorUI />;
+  if (isError) return <ErrorUI title="Echec lors du chargement des adresses" />;
 
   return (
     <SafeScreen>
@@ -332,34 +334,3 @@ function WishlistScreen() {
 }
 
 export default WishlistScreen;
-
-function LoadingUI() {
-  return (
-    <SafeScreen>
-      <View className="flex-1 items-center justify-center">
-        <ActivityIndicator size="large" color="#1DB954" />
-        <Text className="text-text-secondary mt-4">
-          Chargement des favoris...
-        </Text>
-      </View>
-    </SafeScreen>
-  );
-}
-
-function ErrorUI() {
-  return (
-    <SafeScreen>
-      <View className="flex-1 items-center justify-center px-6">
-        <Ionicons name="alert-circle-outline" size={64} color="#FF6B6B" />
-
-        <Text className="text-text-primary font-semibold text-xl mt-4">
-          Impossible de charger les favoris
-        </Text>
-
-        <Text className="text-text-secondary text-center mt-2">
-          Vérifiez votre connexion et réessayez.
-        </Text>
-      </View>
-    </SafeScreen>
-  );
-}
