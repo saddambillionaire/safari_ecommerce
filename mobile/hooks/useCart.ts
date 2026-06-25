@@ -1,14 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Cart } from "@/types";
 import { useApi } from "@/lib/api";
-import { useRef } from "react";
+import { useState } from "react";
 
 const useCart = () => {
   const api = useApi();
   const queryClient = useQueryClient();
 
-  // 👉 tracks which product is currently being added
-  const addingProductId = useRef<string | null>(null);
+  // ✅ FIX: state instead of ref (triggers re-render)
+  const [addingProductId, setAddingProductId] = useState<string | null>(null);
 
   const {
     data: cart,
@@ -30,7 +30,7 @@ const useCart = () => {
       productId: string;
       quantity?: number;
     }) => {
-      addingProductId.current = productId;
+      setAddingProductId(productId);
 
       const { data } = await api.post<{ cart: Cart }>("/cart", {
         productId,
@@ -45,7 +45,7 @@ const useCart = () => {
     },
 
     onSettled: () => {
-      addingProductId.current = null;
+      setAddingProductId(null);
     },
   });
 
@@ -86,14 +86,15 @@ const useCart = () => {
     onSuccess: () =>
       queryClient.invalidateQueries({ queryKey: ["cart"] }),
   });
+
   const cartTotal =
-  cart?.items?.reduce((sum, item) => {
-    const price = item.productId?.price ?? 0;
-    return sum + price * item.quantity;
-  }, 0) ?? 0;
+    cart?.items?.reduce((sum, item) => {
+      const price = item.productId?.price ?? 0;
+      return sum + price * item.quantity;
+    }, 0) ?? 0;
 
   const cartItemCount =
-    cart?.items.reduce((sum, item) => sum + item.quantity, 0) ?? 0;
+    cart?.items?.reduce((sum, item) => sum + item.quantity, 0) ?? 0;
 
   return {
     cart,
@@ -107,9 +108,9 @@ const useCart = () => {
     removeFromCart: removeFromCartMutation.mutate,
     clearCart: clearCartMutation.mutate,
 
-    // ✅ FIX: per-product loading
+    // ✅ FIXED: now works correctly with re-render
     isAddingToCart: (productId: string) =>
-      addingProductId.current === productId,
+      addingProductId === productId,
 
     isUpdating: updateQuantityMutation.isPending,
     isRemoving: removeFromCartMutation.isPending,

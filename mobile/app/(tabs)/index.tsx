@@ -12,6 +12,7 @@ import useProducts from "@/hooks/useProducts";
 import SafeScreen from "@/components/SafeScreen";
 import { useUser } from "@clerk/clerk-expo";
 import { Image } from "expo-image";
+import { LinearGradient } from "expo-linear-gradient";
 
 const CATEGORIES = [
   { name: "All", icon: "grid-outline" as const },
@@ -58,7 +59,7 @@ const ShopScreen = () => {
       >
         {/* APP BAR */}
         <View className="px-6 pt-4 pb-4 flex-row items-center justify-between">
-          <Text className="text-text-primary text-3xl font-black">Safari</Text>
+          <Text className="text-primary text-3xl font-black">Safari-mart</Text>
 
           <View className="flex-row items-center">
             <TouchableOpacity className="mr-4">
@@ -84,7 +85,15 @@ const ShopScreen = () => {
 
         {/* USER CARD */}
         <View className="px-6 mb-4">
-          <View className="bg-surface rounded-3xl p-5">
+          <LinearGradient
+            colors={["#1DB954", "#169C46", "#0F6B31"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={{
+              borderRadius: 24,
+              padding: 20,
+            }}
+          >
             <View className="flex-row items-center">
               <Image
                 source={user?.imageUrl}
@@ -92,34 +101,33 @@ const ShopScreen = () => {
                   width: 60,
                   height: 60,
                   borderRadius: 30,
+                  borderWidth: 2,
+                  borderColor: "rgba(255,255,255,0.3)",
                 }}
               />
 
-              <View className="ml-4 flex-1 justify-center">
+              <View className="ml-4 flex-1">
                 <Text className="text-white text-md font-medium">
                   Bonjour 👋
                 </Text>
 
                 <Text
-                  className="text-white text-xl font-bold mt-1"
+                  className="text-white text-2xl font-bold mt-1"
                   numberOfLines={1}
                 >
                   {user?.firstName} {user?.lastName}
                 </Text>
 
-                <Text
-                  className="text-text-secondary text-sm mt-2"
-                  numberOfLines={2}
-                >
+                <Text className="text-white/80 text-sm mt-2" numberOfLines={2}>
                   Découvrez les meilleures offres ici.
                 </Text>
               </View>
             </View>
-          </View>
+          </LinearGradient>
         </View>
 
         {/* SEARCH BAR */}
-        <View className="px-6 mb-6">
+        <View className="px-6 mb-3">
           <View className="bg-surface rounded-3xl px-4 h-12 flex-row items-center">
             <Ionicons
               name="search"
@@ -139,7 +147,7 @@ const ShopScreen = () => {
         </View>
 
         {/* CATEGORIES */}
-        <View className="px-6 mb-6">
+        <View className="px-6 mb-6 style={{ marginTop: 10 }">
           <Text className="text-text-primary text-xl font-bold mb-4">
             Catégories
           </Text>
