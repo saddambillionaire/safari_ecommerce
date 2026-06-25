@@ -2,12 +2,12 @@ import { User } from "../models/user.model.js";
 
 export async function addAddress(req, res) {
   try {
-    const { label, nomComplet, ville, commune, quartier, avenue, phoneNumber, isDefault } =
+    const { label, nomComplet, ville, commune, quartier, avenue ,reference , numeroTelephone, isDefault } =
       req.body;
 
     const user = req.user;
 
-    if (!nomComplet || !ville  || !commune || !quartier, avenue, phoneNumber) {
+    if (!nomComplet || !ville  || !commune || !quartier || !avenue || !numeroTelephone) {
       return res.status(400).json({ error: "Missing required address fields" });
     }
 
@@ -19,15 +19,16 @@ export async function addAddress(req, res) {
     }
 
     user.addresses.push({
-      label,
-      nomComplet,
-      ville,
-      commune,
-      quartier,
-      avenue,
-      phoneNumber,
-      isDefault: isDefault || false,
-    });
+  label,
+  nomComplet,
+  ville,
+  commune,
+  quartier,
+  avenue,
+  reference: reference || null,
+  numeroTelephone,
+  isDefault: isDefault || false,
+});
 
     await user.save();
 
@@ -51,7 +52,7 @@ export async function getAddresses(req, res) {
 
 export async function updateAddress(req, res) {
   try {
-    const { label, nomComplet, ville, commune, quartier, avenue, phoneNumber, isDefault } =
+    const { label, nomComplet, ville, commune, quartier, avenue, numeroTelephone, isDefault } =
       req.body;
 
     const { addressId } = req.params;
@@ -75,7 +76,7 @@ export async function updateAddress(req, res) {
     address.commune = commune || address.commune;
     address.quartier = quartier || address.quartier;
     address.avenue = avenue || address.avenue;
-    address.phoneNumber = phoneNumber || address.phoneNumber;
+    address.numeroTelephone = numeroTelephone || address.numeroTelephone;
     address.isDefault = isDefault !== undefined ? isDefault : address.isDefault;
 
     await user.save();

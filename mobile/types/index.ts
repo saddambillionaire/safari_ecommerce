@@ -27,12 +27,13 @@ export interface User {
 export interface Address {
   _id: string;
   label: string;
-  fullName: string;
-  streetAddress: string;
-  city: string;
-  state: string;
-  zipCode: string;
-  phoneNumber: string;
+  nomComplet: string;
+  ville: string;
+  commune: string;
+  quartier: string;
+  avenue: string;
+  reference: string;
+  numeroTelephone: string;
   isDefault: boolean;
 }
 

@@ -25,11 +25,16 @@ const addressSchema = new mongoose.Schema({
         type: String,   
         required: true,
     },
-    phoneNumber: {
+    reference: {
+    type: String,
+    default: null,
+    trim: true,
+},
+    numeroTelephone: {
         type: String,   
         required: true,
     },
-    isdefault: {
+    isDefault: {
         type: Boolean,
         default: false,
     },
