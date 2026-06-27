@@ -7,7 +7,7 @@ import {
   getWishlist,
   removeFromWishlist,
   updateAddress,
-} from "../controllers/user.controller.js";
+} from "../api/user.api.js";
 import { protectRoute } from "../middlewares/auth.middleware.js";
 
 const router = Router();

@@ -6,7 +6,7 @@ import {
   getCart,
   removeFromCart,
   updateCartItem,
-} from "../controllers/cart.controller.js";
+} from "../api/cart.api.js";
 
 const router = Router();
 

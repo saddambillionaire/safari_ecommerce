@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createProduct,updateOrderStatus, getAllCustomers, getAllProducts, updateProduct, getAllOrders,deleteProduct, getDashboardStats } from '../controllers/admin.controller.js';
+import { createProduct,updateOrderStatus, getAllCustomers, getAllProducts, updateProduct, getAllOrders,deleteProduct, getDashboardStats } from '../api/admin.api.js';
 import { protectRoute, adminOnly } from '../middlewares/auth.middleware.js';
 import { upload } from '../middlewares/multer.middleware.js';
 

@@ -12,6 +12,7 @@ import {
 import useWishlist from "@/hooks/useWishlist";
 import useCart from "@/hooks/useCart";
 import React from "react";
+import { router } from "expo-router";
 
 interface ProductsGridProps {
   isLoading: boolean;
@@ -57,6 +58,7 @@ const ProductsGrid = ({ products, isLoading, isError }: ProductsGridProps) => {
         className="bg-surface rounded-3xl overflow-hidden mb-3"
         style={{ width: "48%" }}
         activeOpacity={0.8}
+        onPress={() => router.push(`/product/${product._id}`)}
       >
         {/* IMAGE */}
         <View className="relative">

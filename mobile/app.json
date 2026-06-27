@@ -48,7 +48,14 @@
           "project": "safari_ecommerce",
           "organization": "safari-gu"
         }
-      ]
+      ],
+      "@sentry/react-native",
+      [
+    "@stripe/stripe-react-native",
+    {
+      "merchantIdentifier": "merchant.com.anonymous.mobile"
+    }
+  ]
     ],
     "experiments": {
       "typedRoutes": true,

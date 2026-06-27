@@ -23,7 +23,14 @@
   "description": "",
   "dependencies": {
     "dotenv": "^17.4.2",
+    "expo": "^56.0.12",
     "express": "^5.2.1",
-    "mongoose": "^9.6.3"
+    "mongoose": "^9.6.3",
+    "react": "19.2.3",
+    "react-native": "0.85.3"
+  },
+  "devDependencies": {
+    "@types/react": "~19.2.14",
+    "typescript": "~6.0.3"
   }
 }

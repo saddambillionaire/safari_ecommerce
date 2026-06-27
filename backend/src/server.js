@@ -11,6 +11,7 @@ import orderRoutes from "./routes/order.route.js";
 import reviewRoutes from "./routes/review.route.js";
 import productRoutes from "./routes/product.route.js";
 import cartRoutes from "./routes/cart.route.js";
+import paymentRoutes from "./routes/payment.route.js";
 import cors from "cors"
 
 const app = express();
@@ -32,6 +33,7 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/cart", cartRoutes);
+app.use("/api/payment", paymentRoutes);
 
 app.use(clerkMiddleware()); // Use Clerk middleware for authentication, it adds auth under the request object, req.auth, which contains the user's authentication information.
 app.get("/api/health", (req, res) => {

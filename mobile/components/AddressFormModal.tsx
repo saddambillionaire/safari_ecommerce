@@ -195,6 +195,26 @@ const AddressFormModal = ({
                 />
               </View>
 
+              {/* REFERENCE */}
+              <View className="mb-5">
+                <Text className="text-text-primary font-semibold mb-2">
+                  Reference
+                </Text>
+
+                <TextInput
+                  className="bg-surface text-text-primary p-4 rounded-2xl text-base"
+                  placeholder="Avenue et numéro"
+                  placeholderTextColor="#666"
+                  value={addressForm.reference ?? ""}
+                  onChangeText={(text) =>
+                    onFormChange({
+                      ...addressForm,
+                      reference: text,
+                    })
+                  }
+                />
+              </View>
+
               {/* TELEPHONE */}
               <View className="mb-5">
                 <Text className="text-text-primary font-semibold mb-2">

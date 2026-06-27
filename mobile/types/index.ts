@@ -1,3 +1,5 @@
+import { Ionicons } from "@expo/vector-icons";
+
 export interface Product {
   _id: string;
   name: string;
@@ -80,12 +82,6 @@ export interface Review {
   updatedAt: string;
 }
 
-export interface CartItem {
-  _id: string;
-  productId: Product;
-  quantity: number;
-}
-
 export interface Cart {
   _id: string;
   user: string;
@@ -94,3 +90,43 @@ export interface Cart {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface CartItem {
+  _id: string;
+  product: Product;
+  quantity: number;
+}
+
+export interface CartItemProps {
+  item: CartItem;
+
+  onIncrease: (productId: string) => void;
+  onDecrease: (productId: string, quantity: number) => void;
+  onRemove: (productId: string, productName: string) => void;
+
+  isUpdating?: boolean;
+  isRemoving?: boolean;
+}
+
+export interface FeedbackState {
+  visible: boolean;
+  title: string;
+  message: string;
+  type: "success" | "error";
+}
+
+export interface ConfirmationModalProps {
+  visible: boolean;
+  title: string;
+  message: string;
+
+  icon?: keyof typeof Ionicons.glyphMap;
+
+  type?: "danger" | "warning";
+
+  confirmText?: string;
+  cancelText?: string;
+
+  onConfirm: () => void;
+  onCancel: () => void;
+};
