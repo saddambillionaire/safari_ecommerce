@@ -7,7 +7,6 @@ const useCart = () => {
   const api = useApi();
   const queryClient = useQueryClient();
 
-  // ✅ FIX: state instead of ref (triggers re-render)
   const [addingProductId, setAddingProductId] = useState<string | null>(null);
 
   const {
@@ -40,9 +39,12 @@ const useCart = () => {
       return data.cart;
     },
 
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["cart"] });
-    },
+    // onSuccess: () => {
+    //   queryClient.invalidateQueries({ queryKey: ["cart"] });
+    // },
+    onSuccess: (cart) => {
+  queryClient.setQueryData(["cart"], cart);
+},
 
     onSettled: () => {
       setAddingProductId(null);
@@ -89,7 +91,7 @@ const useCart = () => {
 
   const cartTotal =
     cart?.items?.reduce((sum, item) => {
-      const price = item.productId?.price ?? 0;
+      const price = item.product?.price ?? 0;
       return sum + price * item.quantity;
     }, 0) ?? 0;
 
@@ -106,9 +108,8 @@ const useCart = () => {
     addToCart: addToCartMutation.mutate,
     updateQuantity: updateQuantityMutation.mutate,
     removeFromCart: removeFromCartMutation.mutate,
-    clearCart: clearCartMutation.mutate,
+    clearCart: clearCartMutation.mutateAsync,
 
-    // ✅ FIXED: now works correctly with re-render
     isAddingToCart: (productId: string) =>
       addingProductId === productId,
 

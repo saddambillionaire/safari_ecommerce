@@ -3,12 +3,15 @@ import AddressesHeader from "@/components/AddressesHeader";
 import AddressFormModal from "@/components/AddressFormModal";
 import ErrorUI from "@/components/ErrorUI";
 import LoadingUI from "@/components/LoadingUI";
+import ConfirmationModal from "@/components/modals/ConfirmationModal";
+import FeedbackModal from "@/components/modals/FeebackMessage";
 import SafeScreen from "@/components/SafeScreen";
 import { useAddresses } from "@/hooks/useAddressess";
-import { Address } from "@/types";
+import { Address, FeedbackState } from "@/types";
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
-import { Modal, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+
 
 function AddressesScreen() {
   const {
@@ -31,12 +34,8 @@ function AddressesScreen() {
     label: string;
   } | null>(null);
 
-  const [feedbackModal, setFeedbackModal] = useState<{
-    visible: boolean;
-    title: string;
-    message: string;
-    type: "success" | "error";
-  }>({
+  const [feedbackModal, setFeedbackModal] =
+  useState<FeedbackState>({
     visible: false,
     title: "",
     message: "",
@@ -177,9 +176,15 @@ function AddressesScreen() {
     setEditingAddressId(null);
   };
 
-  if (isLoading) return <LoadingUI />;
+  if (isLoading) return <LoadingUI title="Chargement des adresses"/>;
 
-  if (isError) return <ErrorUI title="Échec du chargement des adresses" />;
+  if (isError)
+  return (
+    <ErrorUI
+      title="Échec du chargement des adresses"
+      message="Impossible de récupérer vos adresses. Vérifiez votre connexion et réessayez."
+    />
+  );
 
   return (
     <SafeScreen>
@@ -253,118 +258,36 @@ function AddressesScreen() {
         onFormChange={setAddressForm}
       />
 
-      {/* DELETE MODAL */}
-      <Modal
-        visible={!!selectedAddress}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setSelectedAddress(null)}
-      >
-        <View className="flex-1 bg-black/60 justify-center items-center px-6">
-          <View className="bg-surface rounded-3xl p-6 w-full">
-            <View className="items-center">
-              <View className="bg-red-500/15 p-4 rounded-full">
-                <Ionicons name="trash-outline" size={28} color="#EF4444" />
-              </View>
+      <ConfirmationModal
+  visible={!!selectedAddress}
+  title="Supprimer l'adresse ?"
+  message={`Voulez-vous vraiment supprimer "${selectedAddress?.label}" ?`}
+  confirmText="Supprimer"
+  cancelText="Annuler"
+  type="danger"
+  onCancel={() => setSelectedAddress(null)}
+  onConfirm={() => {
+    if (selectedAddress) {
+      deleteAddress(selectedAddress.id);
+    }
 
-              <Text className="text-text-primary text-xl font-bold mt-4">
-                Supprimer l'adresse ?
-              </Text>
+    setSelectedAddress(null);
+  }}
+/>
 
-              <Text className="text-text-secondary text-center mt-3">
-                Voulez-vous vraiment supprimer{" "}
-                <Text className="font-bold text-text-primary">
-                  {selectedAddress?.label}
-                </Text>
-                ?
-              </Text>
-            </View>
-
-            <View className="flex-row mt-8">
-              <TouchableOpacity
-                className="flex-1 bg-background-lighter py-4 rounded-2xl mr-2"
-                onPress={() => setSelectedAddress(null)}
-              >
-                <Text className="text-center text-text-primary font-semibold">
-                  Annuler
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                className="flex-1 bg-red-500 py-4 rounded-2xl ml-2"
-                onPress={() => {
-                  if (selectedAddress) {
-                    deleteAddress(selectedAddress.id);
-                  }
-
-                  setSelectedAddress(null);
-                }}
-              >
-                <Text className="text-center text-white font-semibold">
-                  Supprimer
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
-
-      {/* FEEDBACK MODAL */}
-      <Modal
-        visible={feedbackModal.visible}
-        transparent
-        animationType="fade"
-        onRequestClose={() =>
-          setFeedbackModal((prev) => ({
-            ...prev,
-            visible: false,
-          }))
-        }
-      >
-        <View className="flex-1 bg-black/60 justify-center items-center px-6">
-          <View className="bg-surface rounded-3xl p-6 w-full">
-            <View className="items-center">
-              <View
-                className={`p-4 rounded-full ${
-                  feedbackModal.type === "success"
-                    ? "bg-green-500/15"
-                    : "bg-red-500/15"
-                }`}
-              >
-                <Ionicons
-                  name={
-                    feedbackModal.type === "success" ? "checkmark" : "close"
-                  }
-                  size={28}
-                  color={
-                    feedbackModal.type === "success" ? "#1DB954" : "#EF4444"
-                  }
-                />
-              </View>
-
-              <Text className="text-text-primary text-xl font-bold mt-4">
-                {feedbackModal.title}
-              </Text>
-
-              <Text className="text-text-secondary text-center mt-3">
-                {feedbackModal.message}
-              </Text>
-            </View>
-
-            <TouchableOpacity
-              className="mt-6 bg-primary py-4 rounded-2xl"
-              onPress={() =>
-                setFeedbackModal((prev) => ({
-                  ...prev,
-                  visible: false,
-                }))
-              }
-            >
-              <Text className="text-center text-background font-bold">OK</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
+<FeedbackModal
+  visible={feedbackModal.visible}
+  title={feedbackModal.title}
+  message={feedbackModal.message}
+  type={feedbackModal.type}
+  onClose={() =>
+    setFeedbackModal((prev) => ({
+      ...prev,
+      visible: false,
+    }))
+  }
+/>
+    
     </SafeScreen>
   );
 }

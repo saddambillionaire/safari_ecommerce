@@ -1,16 +1,35 @@
-import React from "react";
 import { Redirect, Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "@clerk/clerk-expo";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import SafeScreen from "@/components/SafeScreen";
+import { ActivityIndicator, View, Text} from "react-native";
 
 const TabsLayout = () => {
   const { isSignedIn, isLoaded } = useAuth();
   const insets = useSafeAreaInsets();
 
-  if (!isLoaded) return null; // for a better ux
-  if (!isSignedIn) return <Redirect href={"/(auth)"} />;
+  if (!isLoaded) {
+    return (
+      <SafeScreen>
+        <View className="flex-1 items-center justify-center px-6">
+        <ActivityIndicator size="large" />
 
+        <Text className="mt-5 text-xl font-bold text-text-primary">
+          Chargement...
+        </Text>
+
+        <Text className="mt-2 text-center text-text-secondary">
+          Vérification de votre session...
+        </Text>
+      </View>
+      </SafeScreen>
+    );
+  }
+
+  if (!isSignedIn) {
+    return <Redirect href="/(auth)" />;
+  }
   return (
     <Tabs
       screenOptions={{

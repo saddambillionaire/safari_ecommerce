@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { protectRoute } from "../middlewares/auth.middleware.js";
-import { createReview, deleteReview } from "../controllers/review.controller.js";
+import { createReview, deleteReview } from "../api/review.api.js";
 
 const router = Router();
 

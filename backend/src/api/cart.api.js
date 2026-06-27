@@ -7,7 +7,7 @@ export async function getCart(req, res) {
     // populate("items.product") remplace les ObjectId des produits par les documents Product complets.
     let cart = await Cart.findOne({
       clerkId: req.user.clerkId,
-    }).populate("items.productId");
+    }).populate("items.product");
 
     // Si aucun panier n'existe encore pour cet utilisateur
     if (!cart) {
@@ -16,7 +16,7 @@ export async function getCart(req, res) {
 
       // Création d'un nouveau panier vide
       cart = await Cart.create({
-        userId: user._id,         // Référence MongoDB vers l'utilisateur
+        user: user._id,         // Référence MongoDB vers l'utilisateur
         clerkId: user.clerkId,  // Identifiant Clerk
         items: [],              // Tableau vide de produits
       });
@@ -55,14 +55,14 @@ export async function addToCart(req, res) {
       const user = req.user;
 
       cart = await Cart.create({
-        userId: user._id,
+        user: user._id,
         clerkId: user.clerkId,
         items: [],
       });
     }
 
     // check if item already in the cart
-    const existingItem = cart.items.find((item) => item.productId.toString() === productId);
+    const existingItem = cart.items.find((item) => item.product.toString() === productId);
     if (existingItem) {
       // // increment quantity by 1
       // const newQuantity = existingItem.quantity + 1;
@@ -100,7 +100,7 @@ export async function updateCartItem(req, res) {
       return res.status(404).json({ error: "Charriot introuvable" });
     }
 
-    const itemIndex = cart.items.findIndex((item) => item.productId.toString() === productId);
+    const itemIndex = cart.items.findIndex((item) => item.product.toString() === productId);
     if (itemIndex === -1) {
       return res.status(404).json({ error: "Article indisponible dans le charriot " });
     }
@@ -135,7 +135,7 @@ export async function removeFromCart(req, res) {
     }
 
     // Garde uniquement les articles dont l'id est différent => suppression
-    cart.items = cart.items.filter((item) => item.productId.toString() !== productId);
+    cart.items = cart.items.filter((item) => item.product.toString() !== productId);
     await cart.save();
 
     res.status(200).json({ message: "Article enlevé du charriot", cart });
