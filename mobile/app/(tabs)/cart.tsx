@@ -4,6 +4,7 @@ import useCart from "@/hooks/useCart";
 import { useApi } from "@/lib/api";
 import {
   ActivityIndicator,
+  FlatList,
   ScrollView,
   Text,
   TouchableOpacity,
@@ -285,21 +286,25 @@ const CartScreen = () => {
         contentContainerStyle={{ paddingBottom: 240 }}
       >
         <View className="px-6 gap-2">
-          {cartItems.map((item) => (
-            <CartItem
-              key={item._id}
-              item={item}
-              isUpdating={isUpdating}
-              isRemoving={isRemoving}
-              onIncrease={(productId) => {
-                handleQuantityChange(productId, item.quantity, +1);
-              }}
-              onDecrease={(productId, quantity) => {
-                handleQuantityChange(productId, quantity, -1);
-              }}
-              onRemove={handleRemoveItem}
-            />
-          ))}
+          <FlatList
+            data={cartItems}
+            keyExtractor={(item) => item._id}
+            scrollEnabled={false}
+            renderItem={({ item }) => (
+              <CartItem
+                item={item}
+                isUpdating={isUpdating}
+                isRemoving={isRemoving}
+                onIncrease={(productId) => {
+                  handleQuantityChange(productId, item.quantity, +1);
+                }}
+                onDecrease={(productId, quantity) => {
+                  handleQuantityChange(productId, quantity, -1);
+                }}
+                onRemove={handleRemoveItem}
+              />
+            )}
+          />
         </View>
 
         <OrderSummary
