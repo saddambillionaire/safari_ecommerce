@@ -38,7 +38,7 @@ export async function createProduct(req, res) {
         });
         res.status(201).json(product);
     } catch (error) {
-        res.status(500).json({ message: 'Erreur lors de la création du produit' });
+        res.status(500).json({ message: 'Erreur serveur' });
     }
 }
 
@@ -48,7 +48,7 @@ export async function getAllProducts(_, res) {
         const products = await Product.find().sort({ createdAt: -1 });
         res.status(200).json(products);
     } catch (error) {
-        res.status(500).json({ message: 'Erreur lors de la récupération des produits' });
+        res.status(500).json({ message: 'Erreur serveur' });
     }
 }
 // update product
@@ -112,9 +112,116 @@ export async function updateProduct(req, res) {
 
     res.status(200).json(product);
   } catch (error) {
-    console.error("UPDATE PRODUCT ERROR:", error);
-    res
-      .status(500)
-      .json({ message: "Erreur lors de la mise à jour du produit" });
+    res.status(500).json({ message: 'Erreur serveur' });
   }
 }
+
+export async function getAllOrders(_, res) {
+  try {
+    const orders = await Order.find()
+      .populate("user", "name email")
+      .populate("orderItems.product")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({ orders });
+  } catch (error) {
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+}
+
+export async function updateOrderStatus(req, res) {
+  try {
+    const { orderId } = req.params;
+    const { status } = req.body;
+
+    if (!["pending", "shipped", "delivered"].includes(status)) {
+      return res.status(400).json({ error: "Invalid status" });
+    }
+
+    const order = await Order.findById(orderId);
+    if (!order) {
+      return res.status(404).json({ error: "Order not found" });
+    }
+
+    order.status = status;
+
+    if (status === "shipped" && !order.shippedAt) {
+      order.shippedAt = new Date();
+    }
+
+    if (status === "delivered" && !order.deliveredAt) {
+      order.deliveredAt = new Date();
+    }
+
+    await order.save();
+
+    res.status(200).json({ message: "Order status updated successfully", order });
+  } catch (error) {
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+}
+
+export async function getAllCustomers(_, res) {
+  try {
+    const customers = await User.find().sort({ createdAt: -1 }); // latest user first
+    res.status(200).json({ customers });
+  } catch (error) {
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+}
+
+export async function getDashboardStats(_, res) {
+  try {
+    const totalOrders = await Order.countDocuments();
+
+    const revenueResult = await Order.aggregate([
+      {
+        $group: {
+          _id: null,
+          total: { $sum: "$totalPrice" },
+        },
+      },
+    ]);
+
+    const totalRevenue = revenueResult[0]?.total || 0;
+
+    const totalCustomers = await User.countDocuments();
+    const totalProducts = await Product.countDocuments();
+
+    res.status(200).json({
+      totalRevenue,
+      totalOrders,
+      totalCustomers,
+      totalProducts,
+    });
+  } catch (error) {
+    console.error("Error fetching dashboard stats:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+}
+
+export const deleteProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const product = await Product.findById(id);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    // Delete images from Cloudinary
+    if (product.images && product.images.length > 0) {
+      const deletePromises = product.images.map((imageUrl) => {
+        // Extract public_id from URL (assumes format: .../products/publicId.ext)
+        const publicId = "products/" + imageUrl.split("/products/")[1]?.split(".")[0];
+        if (publicId) return cloudinary.uploader.destroy(publicId);
+      });
+      await Promise.all(deletePromises.filter(Boolean));
+    }
+
+    await Product.findByIdAndDelete(id);
+    res.status(200).json({ message: "Product deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+};
