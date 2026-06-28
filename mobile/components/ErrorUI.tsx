@@ -17,10 +17,7 @@ export default function ErrorUI({ title, message }: ErrorUIProps) {
           {title}
         </Text>
 
-        <Text className="text-text-secondary text-center mt-2">
-          {message}
-          {/* Veuillez vérifier votre connexion internet et réessayer plus tard */}
-        </Text>
+        <Text className="text-text-secondary text-center mt-2">{message}</Text>
       </View>
     </SafeScreen>
   );
