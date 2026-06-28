@@ -2,11 +2,12 @@ import { useAuth } from "@clerk/clerk-expo";
 import axios from "axios";
 import { useEffect } from "react";
 
-// // localhost will work in simulator
+// localhost will work in simulator
+const API_URL = "http://192.168.215.113:3000/api";
 // const API_URL = "http://localhost:3000/api";
 
-// prod url will work in your physical device
-const API_URL = "https://safariecommerce-uvdv4.sevalla.app/api"
+// // prod url will work in your physical device
+// const API_URL = "https://safariecommerce-uvdv4.sevalla.app/api"
 
 const api = axios.create({
   baseURL: API_URL,

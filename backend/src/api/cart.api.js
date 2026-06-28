@@ -37,6 +37,7 @@ export async function getCart(req, res) {
 
 export async function addToCart(req, res) {
   try {
+    console.log("🔥 addToCart HIT");
     const { productId, quantity = 1 } = req.body;
 
     // validate product exists and has stock
@@ -74,16 +75,27 @@ export async function addToCart(req, res) {
       existingItem.quantity = newQuantity;
     } else {
       // add new item
-      cart.items.push({ productId, quantity });
+      cart.items.push({
+  product: productId,
+  quantity,
+});
     }
 
     await cart.save();
 
     res.status(200).json({ message: "Articlé ajouté au charriot", cart });
-  } catch (error) {
-    console.error("Error in addToCart controller:", error);
-    res.status(500).json({ error: "Erreur serveur" });
-  }
+   } catch (error) {
+  console.error("🔥 addToCart error:", error);
+
+  res.status(500).json({
+    error: "Erreur serveur",
+    message: error.message,
+    stack:
+      process.env.NODE_ENV !== "production"
+        ? error.stack
+        : undefined,
+  });
+}
 }
 
 export async function updateCartItem(req, res) {

@@ -12,6 +12,7 @@ const CartItem = ({
   isUpdating,
   isRemoving,
 }: CartItemProps) => {
+  console.log("CartItem:", JSON.stringify(item, null, 2));
   return (
     <View className="bg-surface rounded-3xl overflow-hidden">
       <View className="p-4 flex-row">

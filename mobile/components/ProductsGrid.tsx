@@ -7,12 +7,15 @@ import {
   TouchableOpacity,
   Image,
   ActivityIndicator,
-  Alert,
 } from "react-native";
 import useWishlist from "@/hooks/useWishlist";
 import useCart from "@/hooks/useCart";
 import React from "react";
 import { router } from "expo-router";
+import LoadingUI from "./LoadingUI";
+import ErrorUI from "./ErrorUI";
+import EmptyUI from "./EmptyUI";
+import { toast } from "@/lib/toast";
 
 interface ProductsGridProps {
   isLoading: boolean;
@@ -33,15 +36,12 @@ const ProductsGrid = ({ products, isLoading, isError }: ProductsGridProps) => {
       },
       {
         onSuccess: () => {
-          Alert.alert("Succès", `${productName} ajouté au panier`);
+          toast.success(`${productName} a été ajouté au charriot.`);
         },
 
         onError: (error: any) => {
-          console.log("ADD TO CART ERROR:", error?.response?.data);
-
-          Alert.alert(
-            "Erreur",
-            error?.response?.data?.error || "Échec lors de l'ajout au panier",
+          toast.error(
+            error?.response?.data?.error || "Échec de l'ajout au panier.",
           );
         },
       },
@@ -142,30 +142,15 @@ const ProductsGrid = ({ products, isLoading, isError }: ProductsGridProps) => {
   };
 
   if (isLoading) {
-    return (
-      <View className="py-20 items-center justify-center">
-        <ActivityIndicator size="large" color="#121212" />
-
-        <Text className="text-text-secondary mt-4">
-          Chargement des produits...
-        </Text>
-      </View>
-    );
+    return <LoadingUI title="Chargement des produits" />;
   }
 
   if (isError) {
     return (
-      <View className="py-20 items-center justify-center">
-        <Ionicons name="alert-circle-outline" size={48} color="#FF6B6B" />
-
-        <Text className="text-text-primary font-semibold mt-4">
-          Échec du chargement des produits
-        </Text>
-
-        <Text className="text-text-secondary text-sm mt-2">
-          Veuillez réessayer plus tard
-        </Text>
-      </View>
+      <ErrorUI
+        title="Impossible de charger les produits"
+        message="Une erreur est survenue lors du chargement des produits. Vérifiez votre connexion Internet ou réessayez dans quelques instants."
+      />
     );
   }
 
@@ -187,18 +172,9 @@ const ProductsGrid = ({ products, isLoading, isError }: ProductsGridProps) => {
 
 export default ProductsGrid;
 
-function NoProductsFound() {
-  return (
-    <View className="py-20 items-center justify-center">
-      <Ionicons name="search-outline" size={48} color="#666" />
-
-      <Text className="text-text-primary font-semibold mt-4">
-        Pas de produits trouvés
-      </Text>
-
-      <Text className="text-text-secondary text-sm mt-2">
-        Réessayez votre filtre des produits
-      </Text>
-    </View>
-  );
-}
+const NoProductsFound = () => (
+  <EmptyUI
+    title="Aucun produit disponible"
+    message="Aucun produit ne correspond à votre recherche pour le moment."
+  />
+);

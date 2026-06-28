@@ -30,25 +30,23 @@ const useCart = () => {
       quantity?: number;
     }) => {
       setAddingProductId(productId);
-
       const { data } = await api.post<{ cart: Cart }>("/cart", {
         productId,
         quantity,
       });
-
       return data.cart;
     },
 
-    // onSuccess: () => {
-    //   queryClient.invalidateQueries({ queryKey: ["cart"] });
-    // },
-    onSuccess: (cart) => {
-  queryClient.setQueryData(["cart"], cart);
-},
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
+    },
+//     onSuccess: (cart) => {
+//   queryClient.setQueryData(["cart"], cart);
+// },
 
     onSettled: () => {
       setAddingProductId(null);
-    },
+    }  
   });
 
   const updateQuantityMutation = useMutation({
