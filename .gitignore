@@ -1,2 +1,29 @@
-node_modules
+# dependencies
+node_modules/
+
+# env files
 .env
+.env.local
+.env.*.local
+
+# logs
+*.log
+
+# Expo / React Native
+.expo/
+backend/.expo/
+mobile/.expo/
+
+# builds (ALL apps)
+dist/
+build/
+web-build/
+
+# Vite (admin if used)
+admin/.vite/
+
+# OS files
+.DS_Store
+
+# TypeScript
+*.tsbuildinfo
