@@ -50,6 +50,9 @@ const ShopScreen = () => {
     return filtered;
   }, [products, selectedCategory, searchQuery]);
 
+  const count = filteredProducts.length;
+  const label = count === 1 ? "article" : "articles";
+
   return (
     <SafeScreen>
       <ScrollView
@@ -201,7 +204,9 @@ const ShopScreen = () => {
             </Text>
 
             <Text className="text-text-secondary text-sm">
-              {filteredProducts.length} Articles
+              <Text className="text-text-secondary text-sm">
+                {count} {label}
+              </Text>
             </Text>
           </View>
 

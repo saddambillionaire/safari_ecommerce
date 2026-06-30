@@ -1,11 +1,11 @@
-import dotenv from 'dotenv'
+import dotenv from "dotenv";
 
-dotenv.config()
+dotenv.config();
 
 export const ENV = {
-  NODE_ENV: process.env.NODE_ENV || 'development',
+  NODE_ENV: process.env.NODE_ENV || "development",
   PORT: process.env.PORT || 3000,
-  DB_URL: process.env.DB_URL || 'mongodb://localhost:27017/myapp',
+  DB_URL: process.env.DB_URL || "mongodb://localhost:27017/myapp",
   CLERK_PUBLISHABLE_KEY: process.env.CLERK_PUBLISHABLE_KEY,
   CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
   INNGEST_SIGNING_KEY: process.env.INNGEST_SIGNING_KEY,
@@ -16,4 +16,5 @@ export const ENV = {
   CLIENT_URL: process.env.CLIENT_URL,
   STRIPE_PUBLISHABLE_KEY: process.env.STRIPE_PUBLISHABLE_KEY,
   STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
-}
+  STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
+};

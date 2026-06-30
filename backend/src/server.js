@@ -12,20 +12,36 @@ import reviewRoutes from "./routes/review.route.js";
 import productRoutes from "./routes/product.route.js";
 import cartRoutes from "./routes/cart.route.js";
 import paymentRoutes from "./routes/payment.route.js";
-import cors from "cors"
+import cors from "cors";
 
 const app = express();
 
+// special handling: Stripe webhook needs raw body BEFORE any body parsing middleware
+// apply raw body parser conditionally only to webhook endpoint
+// webhook for orders after payment
+// A webhook is an HTTP endpoint on your backend that Stripe calls automatically when something happens.
+app.use(
+  "/api/payment",
+  (req, res, next) => {
+    if (req.originalUrl === "/api/payment/webhook") {
+      express.raw({ type: "application/json" })(req, res, next);
+    } else {
+      express.json()(req, res, next); // parse json for non-webhook routes
+    }
+  },
+  paymentRoutes,
+);
+
 const __dirname = path.resolve();
 app.use(express.json());
-app.use(cors({origin: ENV.CLIENT_URL, credentials: true })) 
+app.use(cors({ origin: ENV.CLIENT_URL, credentials: true }));
 
 app.use(
   "/api/inngest",
   serve({
     client: inngestClient,
-    functions
-  })
+    functions,
+  }),
 );
 app.use("/api/admin", adminRoutes);
 app.use("/api/users", userRoutes);
@@ -33,7 +49,6 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/cart", cartRoutes);
-app.use("/api/payment", paymentRoutes);
 
 app.use(clerkMiddleware()); // Use Clerk middleware for authentication, it adds auth under the request object, req.auth, which contains the user's authentication information.
 app.get("/api/health", (req, res) => {
@@ -45,7 +60,7 @@ if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../admin/dist")));
 
   app.get("/{*any}", (req, res) => {
-    res.sendFile(path.join(__dirname, "../admin" ,"dist", "index.html"));
+    res.sendFile(path.join(__dirname, "../admin", "dist", "index.html"));
   });
 }
 
@@ -56,7 +71,6 @@ const startServer = async () => {
     app.listen(ENV.PORT, () => {
       console.log(`Server is running on port ${ENV.PORT}`);
     });
-
   } catch (error) {
     console.log("Database connection failed:", error);
   }

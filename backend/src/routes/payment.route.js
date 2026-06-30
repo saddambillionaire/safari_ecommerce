@@ -11,4 +11,4 @@ router.post("/webhook", handleWebhook);
 
 export default router;
 
-// paymen intent = payment request
+// payment intent = payment request

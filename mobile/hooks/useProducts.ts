@@ -8,29 +8,25 @@ const useProducts = () => {
   const result = useQuery({
     queryKey: ["products"],
     queryFn: async () => {
-       try {
-      const { data } = await api.get<Product[]>("/products");
+      try {
+        const { data } = await api.get<Product[]>("/products");
+        return data;
+      } catch (error: any) {
+        console.log("❌ Products error:", error.message);
+        console.log("status:", error.response?.status);
+        console.log("data:", error.response?.data);
+        console.log("baseURL:", error.config?.baseURL);
+        console.log("url:", error.config?.url);
 
-      console.log("✅ Products fetched:", data.length);
-
-      return data;
-    } catch (error: any) {
-      console.log("❌ Products error:", error.message);
-      console.log("status:", error.response?.status);
-      console.log("data:", error.response?.data);
-      console.log("baseURL:", error.config?.baseURL);
-      console.log("url:", error.config?.url);
-
-      throw error;
-    }
-    } 
+        throw error;
+      }
+    },
   });
 
   return result;
 };
 
 export default useProducts;
-
 
 // import { useApi } from "@/lib/api";
 // import { Product } from "@/types";
@@ -44,7 +40,7 @@ export default useProducts;
 //     queryFn: async () => {
 //       const { data } = await api.get<Product[]>("/products");
 //       return data;
-//     } 
+//     }
 //   });
 
 //   return result;
