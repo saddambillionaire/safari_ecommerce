@@ -33,7 +33,9 @@ export default function AddressCard({
 
         {address.isDefault && (
           <View className="bg-primary px-3 py-1 rounded-full">
-            <Text className="text-background text-xs font-bold">Default</Text>
+            <Text className="text-background text-xs font-bold">
+              Par defaut
+            </Text>
           </View>
         )}
       </View>

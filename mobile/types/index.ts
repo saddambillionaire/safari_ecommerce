@@ -103,9 +103,8 @@ export interface CartItemProps {
   onIncrease: (productId: string) => void;
   onDecrease: (productId: string, quantity: number) => void;
   onRemove: (productId: string, productName: string) => void;
-
-  isUpdating?: boolean;
-  isRemoving?: boolean;
+  isIncreasing?: boolean;
+  isDecreasing?: boolean;
 }
 
 export interface FeedbackState {
@@ -129,4 +128,4 @@ export interface ConfirmationModalProps {
 
   onConfirm: () => void;
   onCancel: () => void;
-};
+}

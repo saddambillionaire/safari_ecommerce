@@ -11,6 +11,7 @@ import { tokenCache } from "@clerk/clerk-expo/token-cache";
 import React from "react";
 import * as Sentry from "@sentry/react-native";
 import FeedbackToast from "@/components/FeedbackToast";
+import { StripeProvider } from "@stripe/stripe-react-native";
 
 Sentry.init({
   dsn: "https://c8c04f59623f2b00a2d3606a514e0dfa@o4511591213105152.ingest.de.sentry.io/4511620333764688",
@@ -68,10 +69,14 @@ export default Sentry.wrap(function RootLayout() {
   return (
     <ClerkProvider tokenCache={tokenCache}>
       <QueryClientProvider client={queryClient}>
-        <>
-          <Stack screenOptions={{ headerShown: false }} />
-          <FeedbackToast />
-        </>
+        <StripeProvider
+          publishableKey={process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY!}
+        >
+          <>
+            <Stack screenOptions={{ headerShown: false }} />
+            <FeedbackToast />
+          </>
+        </StripeProvider>
       </QueryClientProvider>
     </ClerkProvider>
   );

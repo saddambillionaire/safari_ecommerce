@@ -75,7 +75,12 @@ const ProductDetailScreen = () => {
 
   if (isLoading) return <LoadingUI title="Chargement du produit" />;
   if (isError || !product)
-    return <ErrorUI title="Ce produit a été supprimé ou n'existe pas" />;
+    return (
+      <ErrorUI
+        title="Produit introuvable"
+        message="Ce produit a été supprimé ou n'existe plus."
+      />
+    );
 
   const inStock = product.stock > 0;
 
@@ -189,7 +194,7 @@ const ProductDetailScreen = () => {
             {product.name}
           </Text>
 
-          <View className="flex-row items-center mt-5">
+          <View className="flex-row items-center mt-3">
             <View className="bg-background rounded-full px-3 py-2 flex-row items-center">
               <Ionicons name="star" size={16} color="#FFC107" />
 
@@ -219,7 +224,7 @@ const ProductDetailScreen = () => {
             </View>
           </View>
 
-          <Text className="text-primary text-5xl font-bold mt-6">
+          <Text className="text-primary text-3xl font-bold mt-3">
             ${product.price.toFixed(2)}
           </Text>
 
@@ -359,71 +364,19 @@ const ProductDetailScreen = () => {
 
       {/* MODAL */}
       <FeedbackModal
-  visible={feedbackModal.visible}
-  title={feedbackModal.title}
-  message={feedbackModal.message}
-  type={feedbackModal.type}
-  onClose={() =>
-    setFeedbackModal((prev) => ({
-      ...prev,
-      visible: false,
-    }))
-  }
-/>
-      
+        visible={feedbackModal.visible}
+        title={feedbackModal.title}
+        message={feedbackModal.message}
+        type={feedbackModal.type}
+        onClose={() =>
+          setFeedbackModal((prev) => ({
+            ...prev,
+            visible: false,
+          }))
+        }
+      />
     </SafeScreen>
   );
 };
 
 export default ProductDetailScreen;
-
-
-{/* <Modal
-        visible={feedbackModal.visible}
-        transparent
-        animationType="fade"
-        onRequestClose={() =>
-          setFeedbackModal((prev) => ({ ...prev, visible: false }))
-        }
-      >
-        <View className="flex-1 bg-black/60 justify-center items-center px-6">
-          <View className="bg-surface rounded-3xl p-6 w-full">
-            <View className="items-center">
-              <View
-                className={`p-4 rounded-full ${
-                  feedbackModal.type === "success"
-                    ? "bg-green-500/15"
-                    : "bg-red-500/15"
-                }`}
-              >
-                <Ionicons
-                  name={
-                    feedbackModal.type === "success" ? "checkmark" : "close"
-                  }
-                  size={28}
-                  color={
-                    feedbackModal.type === "success" ? "#1DB954" : "#EF4444"
-                  }
-                />
-              </View>
-
-              <Text className="text-text-primary text-xl font-bold mt-4">
-                {feedbackModal.title}
-              </Text>
-
-              <Text className="text-text-secondary text-center mt-3">
-                {feedbackModal.message}
-              </Text>
-            </View>
-
-            <TouchableOpacity
-              className="mt-6 bg-primary py-4 rounded-2xl"
-              onPress={() =>
-                setFeedbackModal((prev) => ({ ...prev, visible: false }))
-              }
-            >
-              <Text className="text-center text-background font-bold">OK</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal> */}

@@ -10,22 +10,24 @@ import {
   ScrollView,
   ActivityIndicator,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface AddressSelectionModalProps {
   visible: boolean;
   onClose: () => void;
-  // onProceed: (address: Address) => void;
+  onProceed: (address: Address) => void;
   isProcessing: boolean;
 }
 
 const AddressSelectionModal = ({
   visible,
   onClose,
-  // onProceed,
+  onProceed,
   isProcessing,
 }: AddressSelectionModalProps) => {
   const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
   const { addresses, isLoading: addressesLoading } = useAddresses();
+  const insets = useSafeAreaInsets();
 
   return (
     <Modal
@@ -34,18 +36,19 @@ const AddressSelectionModal = ({
       transparent={true}
       onRequestClose={onClose}
     >
-      <View className="flex-1 bg-black/50 justify-end">
-        <View className="bg-background rounded-t-3xl h-1/2">
+      <View className="flex-1 bg-black/30 justify-end">
+        <View className="bg-background rounded-t-3xl h-3/5 overflow-hidden">
           {/* Modal Header */}
-          <View className="flex-row items-center justify-between p-6 border-b border-surface">
-            <Text className="text-text-primary text-2xl font-bold">
-              Select Address
+          <View className="flex-row items-center justify-between px-4 py-3 border-b border-surface">
+            <Text className="text-text-primary text-xl font-semibold flex-1 pr-2">
+              Choisissez l'adresse
             </Text>
+
             <TouchableOpacity
               onPress={onClose}
-              className="bg-surface rounded-full p-2"
+              className="bg-surface/70 rounded-full w-8 h-8 items-center justify-center"
             >
-              <Ionicons name="close" size={24} color="#FFFFFF" />
+              <Ionicons name="close" size={20} color="#FFFFFF" />
             </TouchableOpacity>
           </View>
 
@@ -86,11 +89,10 @@ const AddressSelectionModal = ({
                           {address.nomComplet}
                         </Text>
                         <Text className="text-text-secondary text-base leading-6 mb-1">
-                          {address.ville}, {address.commune}
+                          {address.ville}
                         </Text>
                         <Text className="text-text-secondary text-base mb-2">
-                          {address.quartier}, {address.avenue}, ,{" "}
-                          {address.reference}
+                          {address.commune} {address.quartier} {address.avenue}
                         </Text>
                         <Text className="text-text-secondary text-base">
                           {address.numeroTelephone}
@@ -112,22 +114,27 @@ const AddressSelectionModal = ({
             )}
           </ScrollView>
 
-          <View className="p-6 border-t border-surface">
+          <View
+            className="p-6 border-t border-surface"
+            style={{
+              paddingBottom: insets.bottom + 18,
+            }}
+          >
             <TouchableOpacity
               className="bg-primary rounded-2xl py-5"
               activeOpacity={0.9}
-              // onPress={() => {
-              //   if (selectedAddress) onProceed(selectedAddress);
-              // }}
+              onPress={() => {
+                if (selectedAddress) onProceed(selectedAddress);
+              }}
               disabled={!selectedAddress || isProcessing}
             >
               <View className="flex-row items-center justify-center">
                 {isProcessing ? (
-                  <ActivityIndicator size="small" color="#121212" />
+                  <ActivityIndicator size="small" color="#FFFFFF" />
                 ) : (
                   <>
-                    <Text className="text-background font-bold text-lg mr-2">
-                      Continue to Payment
+                    <Text className="text-background font-bold text-xl mr-2">
+                      Continuer vers le paiement
                     </Text>
                     <Ionicons name="arrow-forward" size={20} color="#121212" />
                   </>
@@ -142,12 +149,3 @@ const AddressSelectionModal = ({
 };
 
 export default AddressSelectionModal;
-
-// label: string;
-//   nomComplet: string;
-//   ville: string;
-//   commune: string;
-//   quartier: string;
-//   avenue: string;
-//   reference: string;
-//   numeroTelephone: string;

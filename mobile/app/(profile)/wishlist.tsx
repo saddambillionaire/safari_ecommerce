@@ -7,7 +7,6 @@ import { Image } from "expo-image";
 import { router } from "expo-router";
 import {
   ActivityIndicator,
-  Alert,
   Modal,
   ScrollView,
   Text,
@@ -81,8 +80,14 @@ function WishlistScreen() {
     );
   };
 
-  if (isLoading) return <LoadingUI />;
-  if (isError) return <ErrorUI title="Echec lors du chargement des adresses" />;
+  if (isLoading) return <LoadingUI title="Chargement de vos favoris" />;
+  if (isError)
+    return (
+      <ErrorUI
+        title="Échec du chargement de vos favoris"
+        message="Une erreur est survenue lors du chargement de vos favoris. Vérifiez votre connexion Internet et réessayez."
+      />
+    );
 
   return (
     <SafeScreen>
@@ -97,7 +102,7 @@ function WishlistScreen() {
         </Text>
 
         <Text className="text-text-secondary text-sm ml-auto">
-          {wishlist.length} {wishlist.length === 1 ? "item" : "items"}
+          {wishlist.length} {wishlist.length === 1 ? "article" : "articles"}
         </Text>
       </View>
 
@@ -140,19 +145,23 @@ function WishlistScreen() {
               <View className="flex-row">
                 {/* IMAGE + PRICE */}
                 <View className="items-center">
-                  <Image
-                    source={item.images[0]}
-                    style={{
-                      width: 110,
-                      height: 110,
-                      borderRadius: 20,
-                    }}
-                    contentFit="cover"
-                  />
+                  <View style={{ width: 110 }}>
+                    <Image
+                      source={item.images[0]}
+                      style={{
+                        width: "100%",
+                        height: 110,
+                        borderRadius: 20,
+                      }}
+                      contentFit="cover"
+                    />
 
-                  <Text className="text-primary text-xl font-extrabold mt-3">
-                    ${item.price.toFixed(2)}
-                  </Text>
+                    <View className="mt-2 w-full rounded-2xl bg-[#303030] py-1 items-center">
+                      <Text className="text-xl font-extrabold text-primary">
+                        ${item.price.toFixed(2)}
+                      </Text>
+                    </View>
+                  </View>
                 </View>
 
                 {/* CONTENT */}
@@ -203,20 +212,25 @@ function WishlistScreen() {
                       onPress={() => handleAddToCart(item._id, item.name)}
                       disabled={isAddingToCart(item._id)}
                     >
-                      {isAddingToCart(item._id) ? (
-                        <ActivityIndicator size="small" color="#FFFFFF" />
-                      ) : (
-                        <View className="flex-row items-center justify-center">
+                      <View className="flex-row items-center justify-center">
+                        {isAddingToCart(item._id) ? (
+                          <ActivityIndicator
+                            size="small"
+                            color="#121212"
+                            style={{ width: 18, height: 18 }}
+                          />
+                        ) : (
                           <Ionicons
                             name="cart-outline"
                             size={18}
                             color="#121212"
                           />
-                          <Text className="text-background font-bold ml-2">
-                            Ajouter au charriot
-                          </Text>
-                        </View>
-                      )}
+                        )}
+
+                        <Text className="ml-2 font-bold text-background">
+                          Ajouter au charriot
+                        </Text>
+                      </View>
                     </TouchableOpacity>
                   )}
                 </View>

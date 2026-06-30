@@ -54,8 +54,9 @@ const AddressFormModal = ({
       onRequestClose={onClose}
     >
       <KeyboardAvoidingView
+        style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        className="flex-1"
+        // className="flex-1"
       >
         <SafeScreen>
           {/* HEADER */}
@@ -123,7 +124,7 @@ const AddressFormModal = ({
 
                 <TextInput
                   className="bg-surface text-text-primary p-4 rounded-2xl text-base"
-                  placeholder="Kinshasa"
+                  placeholder="ex:Kinshasa"
                   placeholderTextColor="#666"
                   value={addressForm.ville}
                   onChangeText={(text) =>
@@ -143,7 +144,7 @@ const AddressFormModal = ({
 
                 <TextInput
                   className="bg-surface text-text-primary p-4 rounded-2xl text-base"
-                  placeholder="Gombe"
+                  placeholder="ex:Gombe"
                   placeholderTextColor="#666"
                   value={addressForm.commune}
                   onChangeText={(text) =>
@@ -203,7 +204,7 @@ const AddressFormModal = ({
 
                 <TextInput
                   className="bg-surface text-text-primary p-4 rounded-2xl text-base"
-                  placeholder="Avenue et numéro"
+                  placeholder="Indice ou nom communement connu"
                   placeholderTextColor="#666"
                   value={addressForm.reference ?? ""}
                   onChangeText={(text) =>

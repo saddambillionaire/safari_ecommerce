@@ -3,33 +3,43 @@ import { Product } from "../models/product.model.js";
 
 export async function getCart(req, res) {
   try {
-    // Recherche un panier dont le clerkId correspond à l'utilisateur connecté.
-    // populate("items.product") remplace les ObjectId des produits par les documents Product complets.
     let cart = await Cart.findOne({
       clerkId: req.user.clerkId,
     }).populate("items.product");
 
-    // Si aucun panier n'existe encore pour cet utilisateur
+    // 🧠 If no cart exists → create one
     if (!cart) {
-      // On récupère l'utilisateur depuis req.user
       const user = req.user;
 
-      // Création d'un nouveau panier vide
       cart = await Cart.create({
-        user: user._id,         // Référence MongoDB vers l'utilisateur
-        clerkId: user.clerkId,  // Identifiant Clerk
-        items: [],              // Tableau vide de produits
+        user: user._id,
+        clerkId: user.clerkId,
+        items: [],
       });
+
+      return res.status(200).json({ cart });
     }
 
-    // Renvoie le panier trouvé ou créé
-    res.status(200).json({ cart });
+    // 🧼 CLEANUP: remove invalid (deleted) products
+    const originalLength = cart.items.length;
+
+    cart.items = cart.items.filter((item) => item?.product != null);
+
+    const wasCleaned = cart.items.length !== originalLength;
+
+    // 💾 persist cleanup only if needed
+    if (wasCleaned) {
+      await cart.save();
+    }
+
+    return res.status(200).json({
+      cart,
+      cleaned: wasCleaned, // optional but useful for debugging/UI
+    });
   } catch (error) {
-    // Affiche l'erreur dans la console du serveur
     console.error("Error in getCart controller:", error);
 
-    // Renvoie une erreur 500 au client
-    res.status(500).json({
+    return res.status(500).json({
       error: "Erreur serveur",
     });
   }
@@ -37,7 +47,6 @@ export async function getCart(req, res) {
 
 export async function addToCart(req, res) {
   try {
-    console.log("🔥 addToCart HIT");
     const { productId, quantity = 1 } = req.body;
 
     // validate product exists and has stock
@@ -63,11 +72,13 @@ export async function addToCart(req, res) {
     }
 
     // check if item already in the cart
-    const existingItem = cart.items.find((item) => item.product.toString() === productId);
+    const existingItem = cart.items.find(
+      (item) => item.product.toString() === productId,
+    );
     if (existingItem) {
       // // increment quantity by 1
       // const newQuantity = existingItem.quantity + 1;
-       // increment quantity by requested amount
+      // increment quantity by requested amount
       const newQuantity = existingItem.quantity + quantity;
       if (product.stock < newQuantity) {
         return res.status(400).json({ error: "Stock insuffisant" });
@@ -76,26 +87,19 @@ export async function addToCart(req, res) {
     } else {
       // add new item
       cart.items.push({
-  product: productId,
-  quantity,
-});
+        product: productId,
+        quantity,
+      });
     }
 
     await cart.save();
 
     res.status(200).json({ message: "Articlé ajouté au charriot", cart });
-   } catch (error) {
-  console.error("🔥 addToCart error:", error);
-
-  res.status(500).json({
-    error: "Erreur serveur",
-    message: error.message,
-    stack:
-      process.env.NODE_ENV !== "production"
-        ? error.stack
-        : undefined,
-  });
-}
+  } catch (error) {
+    res.status(500).json({
+      error: "Erreur serveur",
+    });
+  }
 }
 
 export async function updateCartItem(req, res) {
@@ -104,7 +108,9 @@ export async function updateCartItem(req, res) {
     const { quantity } = req.body;
 
     if (quantity < 1) {
-      return res.status(400).json({ error: "la quantité doit être d'au moins 1" });
+      return res
+        .status(400)
+        .json({ error: "la quantité doit être d'au moins 1" });
     }
 
     const cart = await Cart.findOne({ clerkId: req.user.clerkId });
@@ -112,9 +118,13 @@ export async function updateCartItem(req, res) {
       return res.status(404).json({ error: "Charriot introuvable" });
     }
 
-    const itemIndex = cart.items.findIndex((item) => item.product.toString() === productId);
+    const itemIndex = cart.items.findIndex(
+      (item) => item.product.toString() === productId,
+    );
     if (itemIndex === -1) {
-      return res.status(404).json({ error: "Article indisponible dans le charriot " });
+      return res
+        .status(404)
+        .json({ error: "Article indisponible dans le charriot " });
     }
 
     // check if product exists & validate stock
@@ -130,7 +140,9 @@ export async function updateCartItem(req, res) {
     cart.items[itemIndex].quantity = quantity;
     await cart.save();
 
-    res.status(200).json({ message: "Le charriot est mis à jour avec succès", cart });
+    res
+      .status(200)
+      .json({ message: "Le charriot est mis à jour avec succès", cart });
   } catch (error) {
     console.error("Error in updateCartItem controller:", error);
     res.status(500).json({ error: "Erreur serveur" });
@@ -147,7 +159,9 @@ export async function removeFromCart(req, res) {
     }
 
     // Garde uniquement les articles dont l'id est différent => suppression
-    cart.items = cart.items.filter((item) => item.product.toString() !== productId);
+    cart.items = cart.items.filter(
+      (item) => item.product.toString() !== productId,
+    );
     await cart.save();
 
     res.status(200).json({ message: "Article enlevé du charriot", cart });
