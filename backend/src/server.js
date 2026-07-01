@@ -16,6 +16,8 @@ import cors from "cors";
 
 const app = express();
 
+const __dirname = path.resolve();
+
 // special handling: Stripe webhook needs raw body BEFORE any body parsing middleware
 // apply raw body parser conditionally only to webhook endpoint
 // webhook for orders after payment
@@ -32,7 +34,6 @@ app.use(
   paymentRoutes,
 );
 
-const __dirname = path.resolve();
 app.use(express.json());
 app.use(cors({ origin: ENV.CLIENT_URL, credentials: true }));
 
