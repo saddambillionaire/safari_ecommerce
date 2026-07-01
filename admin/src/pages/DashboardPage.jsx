@@ -53,15 +53,14 @@ function DashboardPage() {
   return (
     <div className="space-y-6">
 
-      {/* ================= STATS HEADER ================= */}
+      {/* ================= STATS (individual white cards) ================= */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
 
         {statsCards.map((stat) => (
           <div
             key={stat.name}
-            className="bg-surface rounded-2xl p-4 flex items-center justify-between shadow-sm"
+            className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex items-center justify-between"
           >
-            {/* ICON + TITLE */}
             <div className="flex items-center">
               <div
                 className="w-11 h-11 rounded-full flex items-center justify-center"
@@ -71,8 +70,8 @@ function DashboardPage() {
               </div>
 
               <div className="ml-3">
-                <p className="text-sm text-text-secondary">{stat.name}</p>
-                <p className="text-lg font-bold text-text-primary">
+                <p className="text-sm text-gray-500">{stat.name}</p>
+                <p className="text-lg font-bold text-gray-900">
                   {stat.value}
                 </p>
               </div>
@@ -81,17 +80,19 @@ function DashboardPage() {
         ))}
       </div>
 
-      {/* ================= RECENT ORDERS ================= */}
-      <div className="bg-base-100 rounded-2xl shadow-sm border border-base-200 overflow-hidden">
+      {/* ================= RECENT ORDERS (white container) ================= */}
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
 
-        <div className="p-4 border-b border-base-200">
-          <h2 className="text-lg font-bold">Commandes récentes</h2>
+        <div className="p-4 border-b border-gray-100">
+          <h2 className="text-lg font-bold text-gray-900">
+            Commandes récentes
+          </h2>
         </div>
 
         <div className="overflow-x-auto">
           <table className="table">
             <thead>
-              <tr className="text-sm">
+              <tr>
                 <th>Order ID</th>
                 <th>Customer</th>
                 <th>Items</th>
@@ -142,11 +143,162 @@ function DashboardPage() {
           </table>
         </div>
       </div>
+
     </div>
   );
 }
 
 export default DashboardPage;
+
+// import { useQuery } from "@tanstack/react-query";
+// import { orderApi, statsApi } from "../lib/api";
+// import {
+//   DollarSignIcon,
+//   PackageIcon,
+//   ShoppingBagIcon,
+//   UsersIcon,
+// } from "lucide-react";
+// import { capitalizeText, formatDate, getOrderStatusBadge } from "../lib/utils";
+
+// function DashboardPage() {
+//   const { data: ordersData, isLoading: ordersLoading } = useQuery({
+//     queryKey: ["orders"],
+//     queryFn: orderApi.getAll,
+//   });
+
+//   const { data: statsData, isLoading: statsLoading } = useQuery({
+//     queryKey: ["dashboardStats"],
+//     queryFn: statsApi.getDashboard,
+//   });
+
+//   const recentOrders = ordersData?.orders?.slice(0, 5) || [];
+
+//   const statsCards = [
+//     {
+//       name: "Revenus",
+//       value: statsLoading
+//         ? "..."
+//         : `$${statsData?.totalRevenue?.toFixed(2) || 0}`,
+//       icon: <DollarSignIcon className="size-5" />,
+//       color: "#22c55e",
+//     },
+//     {
+//       name: "Commandes",
+//       value: statsLoading ? "..." : statsData?.totalOrders || 0,
+//       icon: <ShoppingBagIcon className="size-5" />,
+//       color: "#3b82f6",
+//     },
+//     {
+//       name: "Clients",
+//       value: statsLoading ? "..." : statsData?.totalCustomers || 0,
+//       icon: <UsersIcon className="size-5" />,
+//       color: "#a855f7",
+//     },
+//     {
+//       name: "Produits",
+//       value: statsLoading ? "..." : statsData?.totalProducts || 0,
+//       icon: <PackageIcon className="size-5" />,
+//       color: "#f59e0b",
+//     },
+//   ];
+
+//   return (
+//     <div className="space-y-6">
+
+//       {/* ================= STATS HEADER ================= */}
+//       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+
+//         {statsCards.map((stat) => (
+//           <div
+//             key={stat.name}
+//             className="bg-surface rounded-2xl p-4 flex items-center justify-between shadow-sm"
+//           >
+//             {/* ICON + TITLE */}
+//             <div className="flex items-center">
+//               <div
+//                 className="w-11 h-11 rounded-full flex items-center justify-center"
+//                 style={{ backgroundColor: stat.color + "20" }}
+//               >
+//                 <div style={{ color: stat.color }}>{stat.icon}</div>
+//               </div>
+
+//               <div className="ml-3">
+//                 <p className="text-sm text-text-secondary">{stat.name}</p>
+//                 <p className="text-lg font-bold text-text-primary">
+//                   {stat.value}
+//                 </p>
+//               </div>
+//             </div>
+//           </div>
+//         ))}
+//       </div>
+
+//       {/* ================= RECENT ORDERS ================= */}
+//       <div className="bg-base-100 rounded-2xl shadow-sm border border-base-200 overflow-hidden">
+
+//         <div className="p-4 border-b border-base-200">
+//           <h2 className="text-lg font-bold">Commandes récentes</h2>
+//         </div>
+
+//         <div className="overflow-x-auto">
+//           <table className="table">
+//             <thead>
+//               <tr className="text-sm">
+//                 <th>Order ID</th>
+//                 <th>Customer</th>
+//                 <th>Items</th>
+//                 <th>Amount</th>
+//                 <th>Status</th>
+//                 <th>Date</th>
+//               </tr>
+//             </thead>
+
+//             <tbody>
+//               {recentOrders.map((order) => (
+//                 <tr key={order._id}>
+//                   <td className="font-medium">
+//                     #{order._id.slice(-8).toUpperCase()}
+//                   </td>
+
+//                   <td>
+//                     <div className="font-medium">
+//                       {order.shippingAddress.fullName}
+//                     </div>
+//                     <div className="text-sm opacity-60">
+//                       {order.orderItems.length} article(s)
+//                     </div>
+//                   </td>
+
+//                   <td className="text-sm">
+//                     {order.orderItems[0]?.name}
+//                     {order.orderItems.length > 1 &&
+//                       ` +${order.orderItems.length - 1} autres`}
+//                   </td>
+
+//                   <td className="font-semibold">
+//                     ${order.totalPrice.toFixed(2)}
+//                   </td>
+
+//                   <td>
+//                     <div className={`badge ${getOrderStatusBadge(order.status)}`}>
+//                       {capitalizeText(order.status)}
+//                     </div>
+//                   </td>
+
+//                   <td className="text-sm opacity-60">
+//                     {formatDate(order.createdAt)}
+//                   </td>
+//                 </tr>
+//               ))}
+//             </tbody>
+//           </table>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
+
+// export default DashboardPage;
 
 // import { useQuery } from "@tanstack/react-query";
 // import { orderApi, statsApi } from "../lib/api";
