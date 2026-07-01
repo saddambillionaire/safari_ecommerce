@@ -65,7 +65,7 @@ function DashboardPage() {
           return (
             <div
               key={stat.name}
-              className="bg-base-100 rounded-xl border border-base-300 shadow-sm p-4 flex items-center justify-between"
+              className="card bg-base-100 border border-[#1DB954] shadow-xl border border-base-300 shadow-sm p-4 flex items-center justify-between"
             >
               <div className="flex items-center">
 
@@ -94,7 +94,9 @@ function DashboardPage() {
       <div className="card bg-base-100 shadow-xl">
 
         <div className="card-body">
-          <h2 className="card-title">Commandes récentes</h2>
+          <div className="border-b border-[#1DB954] pb-3 mb-2">
+  <h2 className="card-title">Commandes récentes</h2>
+</div>
 
           {ordersLoading ? (
             <div className="flex justify-center py-6">
