@@ -64,7 +64,7 @@ function DashboardPage() {
           return (
             <div
               key={stat.name}
-              className="rounded-xl border border-gray-100 bg-white/70 backdrop-blur-sm shadow-sm hover:shadow-md transition p-4 flex items-center justify-between"
+              className="rounded-xl border border-gray-100 bg-gray-100/70 backdrop-blur-sm shadow-sm hover:shadow-md transition p-4 flex items-center justify-between"
             >
               <div className="flex items-center">
 
@@ -90,7 +90,7 @@ function DashboardPage() {
       </div>
 
       {/* ================= TABLE ================= */}
-      <div className="rounded-xl border border-gray-100 bg-white/70 backdrop-blur-sm shadow-sm overflow-hidden">
+      <div className="rounded-xl border border-gray-100 bg-gray-100/70 backdrop-blur-sm shadow-sm overflow-hidden">
 
         <div className="p-3 border-b border-gray-100">
           <h2 className="text-sm font-semibold text-gray-800">
@@ -121,7 +121,7 @@ function DashboardPage() {
 
                   <td>
                     <div className="text-sm font-medium">
-                      {order.shippingAddress.fullName}
+                      {order.shippingAddress.nomComplet}
                     </div>
                     <div className="text-xs text-gray-400">
                       {order.orderItems.length} article(s)
