@@ -112,16 +112,16 @@ function OrdersScreen() {
       </View>
 
       {isLoading ? (
-        <LoadingUI title="Chargement des avis..." />
+        <LoadingUI title="Chargement de vos commandes..." />
       ) : isError ? (
         <ErrorUI
-          title="Impossible de charger les avis"
-          message="Une erreur est survenue lors du chargement des avis. Veuillez réessayer dans quelques instants."
+          title="Impossible de charger les commandes"
+          message="Une erreur est survenue lors du chargement des commandes. Veuillez réessayer dans quelques instants."
         />
       ) : !orders || orders.length === 0 ? (
         <EmptyUI
-          title="Aucun avis disponible"
-          message="Les avis des clients apparaîtront ici dès qu'ils seront publiés."
+          title="Aucune commande disponible"
+          message="Vos commandes apparaîtront ici dès qu'elles seront passées."
         />
       ) : (
         <ScrollView
