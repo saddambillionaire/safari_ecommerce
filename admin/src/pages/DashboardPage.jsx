@@ -1,12 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { orderApi, statsApi } from "../lib/api";
+import { formatDate, getOrderStatusBadge, capitalizeText } from "../lib/utils";
+
+// ✨ Modern icon set
 import {
-  DollarSignIcon,
-  PackageIcon,
-  ShoppingBagIcon,
-  UsersIcon,
-} from "lucide-react";
-import { capitalizeText, formatDate, getOrderStatusBadge } from "../lib/utils";
+  FaMoneyBillWave,
+  FaBoxOpen,
+  FaShoppingCart,
+  FaUsers,
+} from "react-icons/fa";
 
 function DashboardPage() {
   const { data: ordersData, isLoading: ordersLoading } = useQuery({
@@ -27,104 +29,112 @@ function DashboardPage() {
       value: statsLoading
         ? "..."
         : `$${statsData?.totalRevenue?.toFixed(2) || 0}`,
-      icon: <DollarSignIcon className="size-5" />,
+      icon: FaMoneyBillWave,
       color: "#22c55e",
     },
     {
       name: "Commandes",
       value: statsLoading ? "..." : statsData?.totalOrders || 0,
-      icon: <ShoppingBagIcon className="size-5" />,
+      icon: FaShoppingCart,
       color: "#3b82f6",
     },
     {
       name: "Clients",
       value: statsLoading ? "..." : statsData?.totalCustomers || 0,
-      icon: <UsersIcon className="size-5" />,
+      icon: FaUsers,
       color: "#a855f7",
     },
     {
       name: "Produits",
       value: statsLoading ? "..." : statsData?.totalProducts || 0,
-      icon: <PackageIcon className="size-5" />,
+      icon: FaBoxOpen,
       color: "#f59e0b",
     },
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-2">
 
-      {/* ================= STATS (individual white cards) ================= */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* ================= STATS ================= */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
 
-        {statsCards.map((stat) => (
-          <div
-            key={stat.name}
-            className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex items-center justify-between"
-          >
-            <div className="flex items-center">
-              <div
-                className="w-11 h-11 rounded-full flex items-center justify-center"
-                style={{ backgroundColor: stat.color + "20" }}
-              >
-                <div style={{ color: stat.color }}>{stat.icon}</div>
-              </div>
+        {statsCards.map((stat) => {
+          const Icon = stat.icon;
 
-              <div className="ml-3">
-                <p className="text-sm text-gray-500">{stat.name}</p>
-                <p className="text-lg font-bold text-gray-900">
-                  {stat.value}
-                </p>
+          return (
+            <div
+              key={stat.name}
+              className="rounded-xl border border-gray-100 bg-white/70 backdrop-blur-sm shadow-sm hover:shadow-md transition p-4 flex items-center justify-between"
+            >
+              <div className="flex items-center">
+
+                {/* ICON CIRCLE */}
+                <div
+                  className="w-11 h-11 rounded-full flex items-center justify-center"
+                  style={{ backgroundColor: stat.color + "18" }}
+                >
+                  <Icon size={18} color={stat.color} />
+                </div>
+
+                <div className="ml-3">
+                  <p className="text-xs text-gray-500">{stat.name}</p>
+                  <p className="text-lg font-semibold text-gray-900">
+                    {stat.value}
+                  </p>
+                </div>
+
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
-      {/* ================= RECENT ORDERS (white container) ================= */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+      {/* ================= TABLE ================= */}
+      <div className="rounded-xl border border-gray-100 bg-white/70 backdrop-blur-sm shadow-sm overflow-hidden">
 
-        <div className="p-4 border-b border-gray-100">
-          <h2 className="text-lg font-bold text-gray-900">
+        <div className="p-3 border-b border-gray-100">
+          <h2 className="text-sm font-semibold text-gray-800">
             Commandes récentes
           </h2>
         </div>
 
         <div className="overflow-x-auto">
-          <table className="table">
+          <table className="table table-sm">
             <thead>
-              <tr>
-                <th>Order ID</th>
-                <th>Customer</th>
-                <th>Items</th>
-                <th>Amount</th>
-                <th>Status</th>
+              <tr className="text-xs text-gray-500">
+                <th>ID</th>
+                <th>Client</th>
+                <th>Articles</th>
+                <th>Montant</th>
+                <th>Statut</th>
                 <th>Date</th>
               </tr>
             </thead>
 
             <tbody>
               {recentOrders.map((order) => (
-                <tr key={order._id}>
-                  <td className="font-medium">
-                    #{order._id.slice(-8).toUpperCase()}
+                <tr key={order._id} className="hover:bg-gray-50">
+
+                  <td className="font-medium text-xs">
+                    #{order._id.slice(-6).toUpperCase()}
                   </td>
 
                   <td>
-                    <div className="font-medium">
+                    <div className="text-sm font-medium">
                       {order.shippingAddress.fullName}
                     </div>
-                    <div className="text-sm opacity-60">
+                    <div className="text-xs text-gray-400">
                       {order.orderItems.length} article(s)
                     </div>
                   </td>
 
-                  <td className="text-sm">
+                  <td className="text-xs text-gray-600">
                     {order.orderItems[0]?.name}
                     {order.orderItems.length > 1 &&
-                      ` +${order.orderItems.length - 1} autres`}
+                      ` +${order.orderItems.length - 1}`}
                   </td>
 
-                  <td className="font-semibold">
+                  <td className="font-semibold text-sm">
                     ${order.totalPrice.toFixed(2)}
                   </td>
 
@@ -134,14 +144,17 @@ function DashboardPage() {
                     </div>
                   </td>
 
-                  <td className="text-sm opacity-60">
+                  <td className="text-xs text-gray-400">
                     {formatDate(order.createdAt)}
                   </td>
+
                 </tr>
               ))}
             </tbody>
+
           </table>
         </div>
+
       </div>
 
     </div>
