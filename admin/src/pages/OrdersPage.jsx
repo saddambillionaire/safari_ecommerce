@@ -29,8 +29,8 @@ function OrdersPage() {
     <div className="space-y-6">
       {/* HEADER */}
       <div className="flex flex-col gap-2">
-        <h1 className="text-2xl font-bold">Orders</h1>
-        <p className="text-base-content/70">Manage customer orders</p>
+        <h1 className="text-2xl font-bold">Commandes</h1>
+        <p className="text-base-content/70">Gérer les commandes des clients</p>
       </div>
 
       {/* ORDERS TABLE */}
@@ -42,7 +42,7 @@ function OrdersPage() {
             </div>
           ) : orders.length === 0 ? (
             <div className="text-center py-12 text-base-content/60">
-              <p className="text-xl font-semibold mb-2">No orders yet</p>
+              <p className="text-xl font-semibold mb-2">Pas de commandes encore disponibles</p>
               <p className="text-sm">Les commandes apparaitront ici après avoir fait des commandes</p>
             </div>
           ) : (
@@ -50,11 +50,11 @@ function OrdersPage() {
               <table className="table">
                 <thead>
                   <tr>
-                    <th>Order ID</th>
-                    <th>Customer</th>
-                    <th>Items</th>
+                    <th>ID commande</th>
+                    <th>Client</th>
+                    <th>Articles</th>
                     <th>Total</th>
-                    <th>Status</th>
+                    <th>Etat</th>
                     <th>Date</th>
                   </tr>
                 </thead>
@@ -73,7 +73,7 @@ function OrdersPage() {
                         </td>
 
                         <td>
-  <div className="max-w-70 overflow-x-auto whitespace-nowrap pr-2">
+  <div className="max-w-[260px] overflow-x-auto whitespace-nowrap pr-2 scrollbar-thin scrollbar-thumb-base-content/20 scrollbar-track-base-content/5">
     <div className="font-medium">
       {order.shippingAddress.nomComplet}
     </div>
