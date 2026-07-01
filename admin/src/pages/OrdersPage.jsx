@@ -73,7 +73,7 @@ function OrdersPage() {
                         </td>
 
                         <td>
-  <div className="flex gap-2" scrolling="yes">
+  <div className="flex flex-col gap-2" scrolling="yes">
     <div className="font-medium">
       {order.shippingAddress.nomComplet}
     </div>
