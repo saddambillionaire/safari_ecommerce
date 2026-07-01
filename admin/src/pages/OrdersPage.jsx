@@ -73,21 +73,30 @@ function OrdersPage() {
                         </td>
 
                         <td>
-  <div className="flex flex-col gap-2" scrolling="yes">
+  <div className="flex flex-col gap-2" scro>
     <div className="font-medium">
       {order.shippingAddress.nomComplet}
     </div>
 
     <div className="text-sm opacity-60">
-      {order.shippingAddress.ville}, {order.shippingAddress.commune}
+      {order.shippingAddress.ville}
+    </div>
+    <div className="text-sm opacity-60">
+      {order.shippingAddress.commune}
     </div>
 
     <div className="text-sm opacity-60">
       {order.shippingAddress.quartier}, {order.shippingAddress.avenue}
     </div>
+    <div className="text-sm opacity-60">
+      {order.shippingAddress.avenue}
+    </div>
 
     <div className="text-sm opacity-60">
-      {order.shippingAddress.reference}, {order.shippingAddress.numeroTelephone}
+      {order.shippingAddress.reference}
+    </div>
+    <div className="text-sm opacity-60">
+      {order.shippingAddress.numeroTelephone}
     </div>
   </div>
 </td>
