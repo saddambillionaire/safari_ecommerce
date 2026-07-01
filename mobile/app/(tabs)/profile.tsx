@@ -54,13 +54,6 @@ const ProfileScreen = () => {
         {/* APP BAR */}
         <View className="px-6 pt-4 pb-6 flex-row items-center justify-between">
           <Text className="text-text-primary text-3xl font-bold">Profile</Text>
-
-          {/* <TouchableOpacity
-            className="bg-surface rounded-full p-3"
-            activeOpacity={0.7}
-          >
-            <Ionicons name="settings-outline" size={22} color="#FFFFFF" />
-          </TouchableOpacity> */}
         </View>
 
         {/* PROFILE CARD */}
@@ -128,7 +121,7 @@ const ProfileScreen = () => {
         {/* SETTINGS */}
         <View className="mx-6 mb-6">
           <Text className="text-text-primary text-lg font-bold mb-3">
-            Preferences
+            Préferences
           </Text>
 
           <View className="bg-surface rounded-2xl overflow-hidden">
