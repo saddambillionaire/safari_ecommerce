@@ -185,7 +185,7 @@ function WishlistScreen() {
                         {isWishlistLoading(item._id) ? (
                           <ActivityIndicator size="small" color="#1DB954" />
                         ) : (
-                          <Ionicons name="heart" size={22} color="#1DB954" />
+                          <Ionicons name="trash" size={28} color="#FF6B6B" />
                         )}
                       </TouchableOpacity>
                     </View>
