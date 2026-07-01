@@ -147,6 +147,7 @@ const CartScreen = () => {
         cartItems,
         shippingAddress: {
           nomComplet: selectedAddress.nomComplet,
+          ville: selectedAddress.ville,
           commune: selectedAddress.commune,
           quartier: selectedAddress.quartier,
           avenue: selectedAddress.avenue,
