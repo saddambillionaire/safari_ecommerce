@@ -3,6 +3,9 @@ import { ENV } from "../config/env.js";
 import { User } from "../models/user.model.js";
 import { Product } from "../models/product.model.js";
 import { Order } from "../models/order.model.js";
+import { Cart } from "../models/cart.model.js";
+
+const stripe = new Stripe(ENV.STRIPE_SECRET_KEY);
 
 export async function createPaymentIntent(req, res) {
   try {
@@ -98,151 +101,64 @@ export async function createPaymentIntent(req, res) {
 }
 
 export async function handleWebhook(req, res) {
-  const signature = req.headers["stripe-signature"];
-
+  const sig = req.headers["stripe-signature"];
   let event;
 
   try {
     event = stripe.webhooks.constructEvent(
       req.body,
-      signature,
+      sig,
       ENV.STRIPE_WEBHOOK_SECRET,
     );
-  } catch (error) {
-    console.error("❌ Invalid webhook signature:", error.message);
-    return res.status(400).send(`Webhook Error: ${error.message}`);
+  } catch (err) {
+    console.error("Webhook signature verification failed:", err.message);
+    return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
-  // Ignore events we don't process.
-  if (event.type !== "payment_intent.succeeded") {
-    return res.status(200).json({ received: true });
-  }
+  if (event.type === "payment_intent.succeeded") {
+    const paymentIntent = event.data.object;
 
-  const paymentIntent = event.data.object;
+    console.log("Payment succeeded:", paymentIntent.id);
 
-  console.log(`📦 Processing payment_intent.succeeded: ${paymentIntent.id}`);
-
-  const session = await mongoose.startSession();
-
-  try {
-    await session.withTransaction(async () => {
-      const metadata = paymentIntent.metadata ?? {};
-
+    try {
       const { userId, clerkId, orderItems, shippingAddress, totalPrice } =
-        metadata;
+        paymentIntent.metadata;
 
-      // Validate metadata
-      if (
-        !userId ||
-        !clerkId ||
-        !orderItems ||
-        !shippingAddress ||
-        !totalPrice
-      ) {
-        throw new Error("Missing required payment metadata.");
-      }
-
-      let items;
-      let address;
-
-      try {
-        items = JSON.parse(orderItems);
-        address = JSON.parse(shippingAddress);
-      } catch (err) {
-        throw new Error(`Invalid metadata JSON: ${err.message}`);
-      }
-
-      // Application-level idempotency check
+      // Check if order already exists (prevent duplicates)
       const existingOrder = await Order.findOne({
         "paymentResult.id": paymentIntent.id,
-      }).session(session);
-
-      if (existingOrder) {
-        console.log(`ℹ️ Order already exists for payment ${paymentIntent.id}.`);
-        return;
-      }
-
-      // Reserve stock
-      for (const item of items) {
-        const result = await Product.updateOne(
-          {
-            _id: item.product,
-            stock: { $gte: item.quantity },
-          },
-          {
-            $inc: {
-              stock: -item.quantity,
-            },
-          },
-          {
-            session,
-          },
-        );
-
-        if (result.modifiedCount !== 1) {
-          throw new Error(`Insufficient stock for product ${item.product}`);
-        }
-      }
-
-      // Create order
-      await Order.create(
-        [
-          {
-            user: userId,
-            clerkId,
-            stripeCustomerId: paymentIntent.customer,
-
-            orderItems: items,
-            shippingAddress: address,
-
-            paymentResult: {
-              id: paymentIntent.id,
-              status: paymentIntent.status,
-              amountReceived: paymentIntent.amount_received / 100,
-              currency: paymentIntent.currency,
-              paymentMethod: paymentIntent.payment_method,
-              processedAt: new Date(),
-            },
-
-            totalPrice: Number(totalPrice),
-
-            status: "paid",
-            paidAt: new Date(),
-          },
-        ],
-        {
-          session,
-        },
-      );
-
-      console.log(
-        `✅ Order successfully created for payment ${paymentIntent.id}`,
-      );
-    });
-
-    return res.status(200).json({
-      received: true,
-    });
-  } catch (error) {
-    // Duplicate key => webhook replay.
-    if (error?.code === 11000) {
-      console.log(
-        `ℹ️ Duplicate webhook ignored for payment ${paymentIntent.id}.`,
-      );
-
-      return res.status(200).json({
-        received: true,
       });
+      if (existingOrder) {
+        console.log("Order already exists for payment:", paymentIntent.id);
+        return res.json({ received: true });
+      }
+
+      // create order
+      const order = await Order.create({
+        user: userId,
+        clerkId,
+        orderItems: JSON.parse(orderItems),
+        shippingAddress: JSON.parse(shippingAddress),
+        paymentResult: {
+          id: paymentIntent.id,
+          status: "succeeded",
+        },
+        totalPrice: parseFloat(totalPrice),
+      });
+
+      // update product stock
+      const items = JSON.parse(orderItems);
+      for (const item of items) {
+        await Product.findByIdAndUpdate(item.product, {
+          $inc: { stock: -item.quantity },
+        });
+      }
+
+      console.log("Order created successfully:", order._id);
+    } catch (error) {
+      console.error("Error creating order from webhook:", error);
     }
-
-    console.error("========== WEBHOOK FAILED ==========");
-    console.error(error);
-
-    // Returning a non-2xx response tells Stripe to retry.
-    return res.status(500).json({
-      error: "Webhook processing failed.",
-    });
-  } finally {
-    await session.endSession();
   }
+
+  res.json({ received: true });
 }
