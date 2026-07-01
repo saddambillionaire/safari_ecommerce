@@ -6,11 +6,7 @@ import {
   ShoppingBagIcon,
   UsersIcon,
 } from "lucide-react";
-import {
-  capitalizeText,
-  formatDate,
-  getOrderStatusBadge,
-} from "../lib/utils";
+import { capitalizeText, formatDate, getOrderStatusBadge } from "../lib/utils";
 
 function DashboardPage() {
   const { data: ordersData, isLoading: ordersLoading } = useQuery({
@@ -27,142 +23,124 @@ function DashboardPage() {
 
   const statsCards = [
     {
-      name: "Total Revenue",
+      name: "Revenus",
       value: statsLoading
         ? "..."
         : `$${statsData?.totalRevenue?.toFixed(2) || 0}`,
-      icon: <DollarSignIcon className="size-6" />,
+      icon: <DollarSignIcon className="size-5" />,
       color: "#22c55e",
     },
     {
-      name: "Total Orders",
+      name: "Commandes",
       value: statsLoading ? "..." : statsData?.totalOrders || 0,
-      icon: <ShoppingBagIcon className="size-6" />,
+      icon: <ShoppingBagIcon className="size-5" />,
       color: "#3b82f6",
     },
     {
-      name: "Total Customers",
+      name: "Clients",
       value: statsLoading ? "..." : statsData?.totalCustomers || 0,
-      icon: <UsersIcon className="size-6" />,
+      icon: <UsersIcon className="size-5" />,
       color: "#a855f7",
     },
     {
-      name: "Total Products",
+      name: "Produits",
       value: statsLoading ? "..." : statsData?.totalProducts || 0,
-      icon: <PackageIcon className="size-6" />,
-      color: "#f97316",
+      icon: <PackageIcon className="size-5" />,
+      color: "#f59e0b",
     },
   ];
 
   return (
     <div className="space-y-6">
 
-      {/* HEADER */}
-      <div>
-        <h1 className="text-3xl font-bold">Dashboard</h1>
-        <p className="text-base-content/60">
-          Overview of your store activity
-        </p>
-      </div>
+      {/* ================= STATS HEADER ================= */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
 
-      {/* STATS (REDESIGNED) */}
-      <div className="space-y-3">
         {statsCards.map((stat) => (
           <div
             key={stat.name}
-            className="bg-base-100 rounded-2xl p-4 flex items-center justify-between shadow-sm border border-base-200 hover:shadow-md transition"
+            className="bg-surface rounded-2xl p-4 flex items-center justify-between shadow-sm"
           >
-            {/* LEFT */}
+            {/* ICON + TITLE */}
             <div className="flex items-center">
               <div
-                className="w-12 h-12 rounded-full flex items-center justify-center"
+                className="w-11 h-11 rounded-full flex items-center justify-center"
                 style={{ backgroundColor: stat.color + "20" }}
               >
                 <div style={{ color: stat.color }}>{stat.icon}</div>
               </div>
 
-              <div className="ml-4">
-                <p className="text-sm text-base-content/60">{stat.name}</p>
+              <div className="ml-3">
+                <p className="text-sm text-text-secondary">{stat.name}</p>
+                <p className="text-lg font-bold text-text-primary">
+                  {stat.value}
+                </p>
               </div>
             </div>
-
-            {/* RIGHT VALUE */}
-            <div className="text-xl font-bold">{stat.value}</div>
           </div>
         ))}
       </div>
 
-      {/* RECENT ORDERS (REDESIGNED TABLE) */}
+      {/* ================= RECENT ORDERS ================= */}
       <div className="bg-base-100 rounded-2xl shadow-sm border border-base-200 overflow-hidden">
 
-        {/* HEADER */}
         <div className="p-4 border-b border-base-200">
-          <h2 className="text-lg font-bold">Recent Orders</h2>
-          <p className="text-sm text-base-content/60">
-            Latest customer purchases
-          </p>
+          <h2 className="text-lg font-bold">Commandes récentes</h2>
         </div>
 
-        {ordersLoading ? (
-          <div className="flex justify-center py-10">
-            <span className="loading loading-spinner loading-lg" />
-          </div>
-        ) : recentOrders.length === 0 ? (
-          <div className="text-center py-10 text-base-content/60">
-            No orders yet
-          </div>
-        ) : (
-          <div className="divide-y divide-base-200">
+        <div className="overflow-x-auto">
+          <table className="table">
+            <thead>
+              <tr className="text-sm">
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Items</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Date</th>
+              </tr>
+            </thead>
 
-            {recentOrders.map((order) => (
-              <div
-                key={order._id}
-                className="p-4 flex items-center justify-between hover:bg-base-200/40 transition"
-              >
-
-                {/* LEFT */}
-                <div>
-                  <div className="font-semibold">
+            <tbody>
+              {recentOrders.map((order) => (
+                <tr key={order._id}>
+                  <td className="font-medium">
                     #{order._id.slice(-8).toUpperCase()}
-                  </div>
+                  </td>
 
-                  <div className="text-sm text-base-content/60">
-                    {order.shippingAddress.fullName}
-                  </div>
+                  <td>
+                    <div className="font-medium">
+                      {order.shippingAddress.fullName}
+                    </div>
+                    <div className="text-sm opacity-60">
+                      {order.orderItems.length} article(s)
+                    </div>
+                  </td>
 
-                  <div className="text-xs text-base-content/50">
-                    {order.orderItems.length} item(s)
-                  </div>
-                </div>
+                  <td className="text-sm">
+                    {order.orderItems[0]?.name}
+                    {order.orderItems.length > 1 &&
+                      ` +${order.orderItems.length - 1} autres`}
+                  </td>
 
-                {/* MIDDLE */}
-                <div className="hidden md:block text-sm text-base-content/70">
-                  {order.orderItems[0]?.name}
-                  {order.orderItems.length > 1 &&
-                    ` +${order.orderItems.length - 1} more`}
-                </div>
-
-                {/* RIGHT */}
-                <div className="text-right space-y-1">
-                  <div className="font-bold">
+                  <td className="font-semibold">
                     ${order.totalPrice.toFixed(2)}
-                  </div>
+                  </td>
 
-                  <div
-                    className={`badge ${getOrderStatusBadge(order.status)}`}
-                  >
-                    {capitalizeText(order.status)}
-                  </div>
+                  <td>
+                    <div className={`badge ${getOrderStatusBadge(order.status)}`}>
+                      {capitalizeText(order.status)}
+                    </div>
+                  </td>
 
-                  <div className="text-xs text-base-content/50">
+                  <td className="text-sm opacity-60">
                     {formatDate(order.createdAt)}
-                  </div>
-                </div>
-
-              </div>
-            ))}
-          </div>
-        )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
