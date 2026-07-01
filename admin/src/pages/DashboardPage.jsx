@@ -1,179 +1,52 @@
-import { useQuery } from "@tanstack/react-query";
-import { orderApi, statsApi } from "../lib/api";
-import {
-  DollarSignIcon,
-  PackageIcon,
-  ShoppingBagIcon,
-  UsersIcon,
-} from "lucide-react";
-import {
-  capitalizeText,
-  formatDate,
-  getOrderStatusBadge,
-} from "../lib/utils";
-
-function DashboardPage() {
-  const { data: ordersData, isLoading: ordersLoading } = useQuery({
-    queryKey: ["orders"],
-    queryFn: orderApi.getAll,
-  });
-
-  const { data: statsData, isLoading: statsLoading } = useQuery({
-    queryKey: ["dashboardStats"],
-    queryFn: statsApi.getDashboard,
-  });
-
-  const recentOrders = ordersData?.orders?.slice(0, 5) || [];
-
-  const statsCards = [
-    {
-      name: "Revenu total",
-      value: statsLoading
-        ? "..."
-        : `$${statsData?.totalRevenue?.toFixed(2) || 0}`,
-      icon: <DollarSignIcon className="size-7" />,
-      color: "text-emerald-500",
-    },
-    {
-      name: "Commandes",
-      value: statsLoading ? "..." : statsData?.totalOrders || 0,
-      icon: <ShoppingBagIcon className="size-7" />,
-      color: "text-blue-500",
-    },
-    {
-      name: "Clients",
-      value: statsLoading ? "..." : statsData?.totalCustomers || 0,
-      icon: <UsersIcon className="size-7" />,
-      color: "text-violet-500",
-    },
-    {
-      name: "Produits",
-      value: statsLoading ? "..." : statsData?.totalProducts || 0,
-      icon: <PackageIcon className="size-7" />,
-      color: "text-orange-500",
-    },
-  ];
-
-  return (
-    <div className="space-y-8">
-      {/* HEADER */}
-      <div>
-        <h1 className="text-3xl font-bold">Dashboard</h1>
-        <p className="text-base-content/60 mt-1">
-          Vue globale de ton activité e-commerce
-        </p>
-      </div>
-
-      {/* STATS */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-        {statsCards.map((stat) => (
+{/* STATS */}
+<div className="space-y-3">
+  {statsCards.map((stat) => (
+    <div
+      key={stat.name}
+      className="bg-base-100 rounded-2xl p-4 flex items-center justify-between shadow-sm border border-base-200 hover:shadow-md transition"
+    >
+      {/* LEFT SIDE */}
+      <div className="flex items-center">
+        <div
+          className="w-12 h-12 rounded-full flex items-center justify-center"
+          style={{
+            backgroundColor:
+              stat.name === "Total Revenue"
+                ? "#22c55e20"
+                : stat.name === "Total Orders"
+                ? "#3b82f620"
+                : stat.name === "Total Customers"
+                ? "#a855f720"
+                : "#f9731620",
+          }}
+        >
           <div
-            key={stat.name}
-            className="card bg-base-100 shadow-md hover:shadow-xl transition-all border border-base-200"
+            className={
+              stat.name === "Total Revenue"
+                ? "text-green-500"
+                : stat.name === "Total Orders"
+                ? "text-blue-500"
+                : stat.name === "Total Customers"
+                ? "text-purple-500"
+                : "text-orange-500"
+            }
           >
-            <div className="card-body flex flex-row items-center justify-between">
-              <div>
-                <div className="text-sm text-base-content/60">
-                  {stat.name}
-                </div>
-                <div className="text-2xl font-bold mt-1">{stat.value}</div>
-              </div>
-
-              <div className={`${stat.color} opacity-80`}>
-                {stat.icon}
-              </div>
-            </div>
+            {stat.icon}
           </div>
-        ))}
-      </div>
+        </div>
 
-      {/* RECENT ORDERS */}
-      <div className="card bg-base-100 shadow-md border border-base-200">
-        <div className="card-body">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold">Commandes récentes</h2>
-            <span className="text-sm text-base-content/60">
-              Dernières activités
-            </span>
-          </div>
-
-          {ordersLoading ? (
-            <div className="flex justify-center py-10">
-              <span className="loading loading-spinner loading-lg" />
-            </div>
-          ) : recentOrders.length === 0 ? (
-            <div className="text-center py-10 text-base-content/60">
-              Aucune commande pour le moment
-            </div>
-          ) : (
-            <div className="overflow-x-auto rounded-xl">
-              <table className="table">
-                <thead className="text-base-content/70">
-                  <tr>
-                    <th>ID</th>
-                    <th>Client</th>
-                    <th>Produits</th>
-                    <th>Montant</th>
-                    <th>Statut</th>
-                    <th>Date</th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {recentOrders.map((order) => (
-                    <tr
-                      key={order._id}
-                      className="hover:bg-base-200 transition"
-                    >
-                      <td className="font-medium">
-                        #{order._id.slice(-8).toUpperCase()}
-                      </td>
-
-                      <td>
-                        <div className="font-medium">
-                          {order.shippingAddress.fullName}
-                        </div>
-                        <div className="text-xs text-base-content/60">
-                          {order.orderItems.length} article(s)
-                        </div>
-                      </td>
-
-                      <td className="text-sm text-base-content/70">
-                        {order.orderItems[0]?.name}
-                        {order.orderItems.length > 1 &&
-                          ` +${order.orderItems.length - 1} autres`}
-                      </td>
-
-                      <td className="font-semibold">
-                        ${order.totalPrice.toFixed(2)}
-                      </td>
-
-                      <td>
-                        <span
-                          className={`badge ${getOrderStatusBadge(
-                            order.status
-                          )}`}
-                        >
-                          {capitalizeText(order.status)}
-                        </span>
-                      </td>
-
-                      <td className="text-sm text-base-content/60">
-                        {formatDate(order.createdAt)}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+        <div className="ml-4">
+          <p className="text-sm text-base-content/60">{stat.name}</p>
         </div>
       </div>
-    </div>
-  );
-}
 
-export default DashboardPage;
+      {/* RIGHT VALUE */}
+      <div className="text-xl font-bold text-base-content">
+        {stat.value}
+      </div>
+    </div>
+  ))}
+</div>
 
 // import { useQuery } from "@tanstack/react-query";
 // import { orderApi, statsApi } from "../lib/api";
