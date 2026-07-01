@@ -1,6 +1,7 @@
 import EmptyUI from "@/components/EmptyUI";
 import ErrorUI from "@/components/ErrorUI";
 import LoadingUI from "@/components/LoadingUI";
+import FeedbackModal from "@/components/modals/FeebackMessage";
 import RatingModal from "@/components/RatingModal";
 import SafeScreen from "@/components/SafeScreen";
 import { useOrders } from "@/hooks/useOrders";
@@ -11,14 +12,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useState } from "react";
-import {
-  ActivityIndicator,
-  Alert,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 function OrdersScreen() {
   const { data: orders, isLoading, isError } = useOrders();
@@ -29,6 +23,18 @@ function OrdersScreen() {
   const [productRatings, setProductRatings] = useState<{
     [key: string]: number;
   }>({});
+
+  const [feedbackModal, setFeedbackModal] = useState<{
+    visible: boolean;
+    title: string;
+    message: string;
+    type: "success" | "error";
+  }>({
+    visible: false,
+    title: "",
+    message: "",
+    type: "success",
+  });
 
   const handleOpenRating = (order: Order) => {
     setShowRatingModal(true);
@@ -51,7 +57,13 @@ function OrdersScreen() {
       (rating) => rating > 0,
     );
     if (!allRated) {
-      Alert.alert("Error", "Please rate all products");
+      setFeedbackModal({
+        visible: true,
+        title: "Évaluation incomplète",
+        message:
+          "Veuillez attribuer une note à tous les produits avant de continuer.",
+        type: "error",
+      });
       return;
     }
 
@@ -235,16 +247,19 @@ function OrdersScreen() {
           setProductRatings((prev) => ({ ...prev, [productId]: rating }))
         }
       />
+      <FeedbackModal
+        visible={feedbackModal.visible}
+        title={feedbackModal.title}
+        message={feedbackModal.message}
+        type={feedbackModal.type}
+        onClose={() =>
+          setFeedbackModal((prev) => ({
+            ...prev,
+            visible: false,
+          }))
+        }
+      />
     </SafeScreen>
   );
 }
 export default OrdersScreen;
-
-function setFeedbackModal(arg0: {
-  visible: boolean;
-  title: string;
-  message: string;
-  type: string;
-}) {
-  throw new Error("Function not implemented.");
-}
