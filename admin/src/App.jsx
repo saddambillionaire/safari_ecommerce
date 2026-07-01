@@ -17,7 +17,7 @@ function App() {
   if (!isLoaded) return <PageLoader />;
 
   return (
-    // this routes tag encloses two routes, in the second, the parent route that permits to all its nested children to start with slash /
+    // this routes tag encloses two routes, in the second, its the parent route that permits to all its nested children to start with slash /
     <Routes>
 
       {/* Login route */}

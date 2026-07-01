@@ -73,9 +73,9 @@ function OrdersPage() {
                         </td>
 
                         <td>
-                          <div className="font-medium">{order.shippingAddress.fullName}</div>
+                          <div className="font-medium">{order.shippingAddress.nomComplet}</div>
                           <div className="text-sm opacity-60">
-                            {order.shippingAddress.city}, {order.shippingAddress.state}
+                            {order.shippingAddress.ville}, {order.shippingAddress.quartier}, {order.shippingAddress.avenue}
                           </div>
                         </td>
 

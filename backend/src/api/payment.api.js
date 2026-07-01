@@ -3,7 +3,6 @@ import { ENV } from "../config/env.js";
 import { User } from "../models/user.model.js";
 import { Product } from "../models/product.model.js";
 import { Order } from "../models/order.model.js";
-import { Cart } from "../models/cart.model.js";
 
 const stripe = new Stripe(ENV.STRIPE_SECRET_KEY);
 
@@ -45,7 +44,7 @@ export async function createPaymentIntent(req, res) {
       });
     }
 
-    const shipping = 10.0; // $10
+    const shipping = 5.0; // $5
     const tax = subtotal * 0.16; // 16%
     const total = subtotal + shipping + tax;
 

@@ -8,7 +8,7 @@ function CustomersPage() {
     queryFn: customerApi.getAll,
   });
 
-  const customers = data || [];
+  const customers = data?.customers ?? [];
 
   return (
     <div className="space-y-6">
