@@ -2,13 +2,14 @@ import { useQuery } from "@tanstack/react-query";
 import { orderApi, statsApi } from "../lib/api";
 import { formatDate, getOrderStatusBadge, capitalizeText } from "../lib/utils";
 
-// ✨ Modern icon set
+// icons (better set, but still simple)
 import {
   FaMoneyBillWave,
   FaBoxOpen,
-  FaShoppingCart,
   FaUsers,
 } from "react-icons/fa";
+
+import { FiShoppingBag } from "react-icons/fi"; // improved cart icon
 
 function DashboardPage() {
   const { data: ordersData, isLoading: ordersLoading } = useQuery({
@@ -35,7 +36,7 @@ function DashboardPage() {
     {
       name: "Commandes",
       value: statsLoading ? "..." : statsData?.totalOrders || 0,
-      icon: FaShoppingCart,
+      icon: FiShoppingBag, // ✅ improved cart icon
       color: "#3b82f6",
     },
     {
@@ -64,21 +65,21 @@ function DashboardPage() {
           return (
             <div
               key={stat.name}
-              className="rounded-xl border border-gray-100 bg-gray-100/70 backdrop-blur-sm shadow-sm hover:shadow-md transition p-4 flex items-center justify-between"
+              className="bg-base-100 rounded-xl border border-base-300 shadow-sm p-4 flex items-center justify-between"
             >
               <div className="flex items-center">
 
-                {/* ICON CIRCLE */}
+                {/* ICON */}
                 <div
                   className="w-11 h-11 rounded-full flex items-center justify-center"
-                  style={{ backgroundColor: stat.color + "18" }}
+                  style={{ backgroundColor: stat.color + "20" }}
                 >
                   <Icon size={18} color={stat.color} />
                 </div>
 
                 <div className="ml-3">
-                  <p className="text-xs text-gray-500">{stat.name}</p>
-                  <p className="text-lg font-semibold text-gray-900">
+                  <p className="text-xs opacity-60">{stat.name}</p>
+                  <p className="text-lg font-semibold">
                     {stat.value}
                   </p>
                 </div>
@@ -90,71 +91,79 @@ function DashboardPage() {
       </div>
 
       {/* ================= TABLE ================= */}
-      <div className="rounded-xl border border-gray-100 bg-gray-100/70 backdrop-blur-sm shadow-sm overflow-hidden">
+      <div className="card bg-base-100 shadow-xl">
 
-        <div className="p-3 border-b border-gray-100">
-          <h2 className="text-sm font-semibold text-gray-800">
-            Commandes récentes
-          </h2>
+        <div className="card-body">
+          <h2 className="card-title">Commandes récentes</h2>
+
+          {ordersLoading ? (
+            <div className="flex justify-center py-6">
+              <span className="loading loading-spinner loading-lg" />
+            </div>
+          ) : recentOrders.length === 0 ? (
+            <div className="text-center py-6 opacity-60">
+              Aucune commande
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="table">
+
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Client</th>
+                    <th>Articles</th>
+                    <th>Montant</th>
+                    <th>Statut</th>
+                    <th>Date</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {recentOrders.map((order) => (
+                    <tr key={order._id}>
+
+                      <td className="font-medium">
+                        #{order._id.slice(-8).toUpperCase()}
+                      </td>
+
+                      <td>
+                        <div className="font-medium">
+                          {order.shippingAddress.fullName}
+                        </div>
+                        <div className="text-sm opacity-60">
+                          {order.orderItems.length} article(s)
+                        </div>
+                      </td>
+
+                      <td className="text-sm">
+                        {order.orderItems[0]?.name}
+                        {order.orderItems.length > 1 &&
+                          ` +${order.orderItems.length - 1}`}
+                      </td>
+
+                      <td className="font-semibold">
+                        ${order.totalPrice.toFixed(2)}
+                      </td>
+
+                      <td>
+                        <div className={`badge ${getOrderStatusBadge(order.status)}`}>
+                          {capitalizeText(order.status)}
+                        </div>
+                      </td>
+
+                      <td className="text-sm opacity-60">
+                        {formatDate(order.createdAt)}
+                      </td>
+
+                    </tr>
+                  ))}
+                </tbody>
+
+              </table>
+            </div>
+          )}
         </div>
-
-        <div className="overflow-x-auto">
-          <table className="table table-sm">
-            <thead>
-              <tr className="text-xs text-gray-500">
-                <th>ID</th>
-                <th>Client</th>
-                <th>Articles</th>
-                <th>Montant</th>
-                <th>Statut</th>
-                <th>Date</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {recentOrders.map((order) => (
-                <tr key={order._id} className="hover:bg-gray-50">
-
-                  <td className="font-medium text-xs">
-                    #{order._id.slice(-6).toUpperCase()}
-                  </td>
-
-                  <td>
-                    <div className="text-sm font-medium">
-                      {order.shippingAddress.nomComplet}
-                    </div>
-                    <div className="text-xs text-gray-400">
-                      {order.orderItems.length} article(s)
-                    </div>
-                  </td>
-
-                  <td className="text-xs text-gray-600">
-                    {order.orderItems[0]?.name}
-                    {order.orderItems.length > 1 &&
-                      ` +${order.orderItems.length - 1}`}
-                  </td>
-
-                  <td className="font-semibold text-sm">
-                    ${order.totalPrice.toFixed(2)}
-                  </td>
-
-                  <td>
-                    <div className={`badge ${getOrderStatusBadge(order.status)}`}>
-                      {capitalizeText(order.status)}
-                    </div>
-                  </td>
-
-                  <td className="text-xs text-gray-400">
-                    {formatDate(order.createdAt)}
-                  </td>
-
-                </tr>
-              ))}
-            </tbody>
-
-          </table>
-        </div>
-
       </div>
 
     </div>
@@ -165,13 +174,15 @@ export default DashboardPage;
 
 // import { useQuery } from "@tanstack/react-query";
 // import { orderApi, statsApi } from "../lib/api";
+// import { formatDate, getOrderStatusBadge, capitalizeText } from "../lib/utils";
+
+// // ✨ Modern icon set
 // import {
-//   DollarSignIcon,
-//   PackageIcon,
-//   ShoppingBagIcon,
-//   UsersIcon,
-// } from "lucide-react";
-// import { capitalizeText, formatDate, getOrderStatusBadge } from "../lib/utils";
+//   FaMoneyBillWave,
+//   FaBoxOpen,
+//   FaShoppingCart,
+//   FaUsers,
+// } from "react-icons/fa";
 
 // function DashboardPage() {
 //   const { data: ordersData, isLoading: ordersLoading } = useQuery({
@@ -192,103 +203,112 @@ export default DashboardPage;
 //       value: statsLoading
 //         ? "..."
 //         : `$${statsData?.totalRevenue?.toFixed(2) || 0}`,
-//       icon: <DollarSignIcon className="size-5" />,
+//       icon: FaMoneyBillWave,
 //       color: "#22c55e",
 //     },
 //     {
 //       name: "Commandes",
 //       value: statsLoading ? "..." : statsData?.totalOrders || 0,
-//       icon: <ShoppingBagIcon className="size-5" />,
+//       icon: FaShoppingCart,
 //       color: "#3b82f6",
 //     },
 //     {
 //       name: "Clients",
 //       value: statsLoading ? "..." : statsData?.totalCustomers || 0,
-//       icon: <UsersIcon className="size-5" />,
+//       icon: FaUsers,
 //       color: "#a855f7",
 //     },
 //     {
 //       name: "Produits",
 //       value: statsLoading ? "..." : statsData?.totalProducts || 0,
-//       icon: <PackageIcon className="size-5" />,
+//       icon: FaBoxOpen,
 //       color: "#f59e0b",
 //     },
 //   ];
 
 //   return (
-//     <div className="space-y-6">
+//     <div className="space-y-6 p-2">
 
-//       {/* ================= STATS HEADER ================= */}
-//       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+//       {/* ================= STATS ================= */}
+//       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
 
-//         {statsCards.map((stat) => (
-//           <div
-//             key={stat.name}
-//             className="bg-surface rounded-2xl p-4 flex items-center justify-between shadow-sm"
-//           >
-//             {/* ICON + TITLE */}
-//             <div className="flex items-center">
-//               <div
-//                 className="w-11 h-11 rounded-full flex items-center justify-center"
-//                 style={{ backgroundColor: stat.color + "20" }}
-//               >
-//                 <div style={{ color: stat.color }}>{stat.icon}</div>
-//               </div>
+//         {statsCards.map((stat) => {
+//           const Icon = stat.icon;
 
-//               <div className="ml-3">
-//                 <p className="text-sm text-text-secondary">{stat.name}</p>
-//                 <p className="text-lg font-bold text-text-primary">
-//                   {stat.value}
-//                 </p>
+//           return (
+//             <div
+//               key={stat.name}
+//               className="rounded-xl border border-gray-100 bg-gray-100/70 backdrop-blur-sm shadow-sm hover:shadow-md transition p-4 flex items-center justify-between"
+//             >
+//               <div className="flex items-center">
+
+//                 {/* ICON CIRCLE */}
+//                 <div
+//                   className="w-11 h-11 rounded-full flex items-center justify-center"
+//                   style={{ backgroundColor: stat.color + "18" }}
+//                 >
+//                   <Icon size={18} color={stat.color} />
+//                 </div>
+
+//                 <div className="ml-3">
+//                   <p className="text-xs text-gray-500">{stat.name}</p>
+//                   <p className="text-lg font-semibold text-gray-900">
+//                     {stat.value}
+//                   </p>
+//                 </div>
+
 //               </div>
 //             </div>
-//           </div>
-//         ))}
+//           );
+//         })}
 //       </div>
 
-//       {/* ================= RECENT ORDERS ================= */}
-//       <div className="bg-base-100 rounded-2xl shadow-sm border border-base-200 overflow-hidden">
+//       {/* ================= TABLE ================= */}
+//       <div className="rounded-xl border border-gray-100 bg-gray-100/70 backdrop-blur-sm shadow-sm overflow-hidden">
 
-//         <div className="p-4 border-b border-base-200">
-//           <h2 className="text-lg font-bold">Commandes récentes</h2>
+//         <div className="p-3 border-b border-gray-100">
+//           <h2 className="text-sm font-semibold text-gray-800">
+//             Commandes récentes
+//           </h2>
 //         </div>
 
 //         <div className="overflow-x-auto">
-//           <table className="table">
+//           <table className="table table-sm">
 //             <thead>
-//               <tr className="text-sm">
-//                 <th>Order ID</th>
-//                 <th>Customer</th>
-//                 <th>Items</th>
-//                 <th>Amount</th>
-//                 <th>Status</th>
+//               <tr className="text-xs text-gray-500">
+//                 <th>ID</th>
+//                 <th>Client</th>
+//                 <th>Articles</th>
+//                 <th>Montant</th>
+//                 <th>Statut</th>
 //                 <th>Date</th>
 //               </tr>
 //             </thead>
 
 //             <tbody>
 //               {recentOrders.map((order) => (
-//                 <tr key={order._id}>
-//                   <td className="font-medium">
-//                     #{order._id.slice(-8).toUpperCase()}
+//                 <tr key={order._id} className="hover:bg-gray-50">
+
+//                   <td className="font-medium text-xs">
+//                     #{order._id.slice(-6).toUpperCase()}
 //                   </td>
 
 //                   <td>
-//                     <div className="font-medium">
-//                       {order.shippingAddress.fullName}
+//                     <div className="text-sm font-medium">
+//                       {order.shippingAddress.nomComplet}
 //                     </div>
-//                     <div className="text-sm opacity-60">
+//                     <div className="text-xs text-gray-400">
 //                       {order.orderItems.length} article(s)
 //                     </div>
 //                   </td>
 
-//                   <td className="text-sm">
+//                   <td className="text-xs text-gray-600">
 //                     {order.orderItems[0]?.name}
 //                     {order.orderItems.length > 1 &&
-//                       ` +${order.orderItems.length - 1} autres`}
+//                       ` +${order.orderItems.length - 1}`}
 //                   </td>
 
-//                   <td className="font-semibold">
+//                   <td className="font-semibold text-sm">
 //                     ${order.totalPrice.toFixed(2)}
 //                   </td>
 
@@ -298,18 +318,25 @@ export default DashboardPage;
 //                     </div>
 //                   </td>
 
-//                   <td className="text-sm opacity-60">
+//                   <td className="text-xs text-gray-400">
 //                     {formatDate(order.createdAt)}
 //                   </td>
+
 //                 </tr>
 //               ))}
 //             </tbody>
+
 //           </table>
 //         </div>
+
 //       </div>
+
 //     </div>
 //   );
 // }
+
+// export default DashboardPage;
+
 
 // export default DashboardPage;
 
