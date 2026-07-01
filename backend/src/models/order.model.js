@@ -5,6 +5,10 @@ const ShippingAddressSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  ville: {
+    type: String,
+    required: true,
+  },
   commune: {
     type: String,
     required: true,

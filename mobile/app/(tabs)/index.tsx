@@ -83,9 +83,6 @@ const ShopScreen = () => {
           </View>
         </View>
 
-        {/* DIVIDER */}
-        <View className="h-[1px] bg-surface-light mx-6 mb-5" />
-
         {/* USER CARD */}
         <View className="px-6 mb-4">
           <LinearGradient
