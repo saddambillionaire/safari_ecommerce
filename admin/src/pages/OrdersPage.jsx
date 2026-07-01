@@ -43,7 +43,7 @@ function OrdersPage() {
           ) : orders.length === 0 ? (
             <div className="text-center py-12 text-base-content/60">
               <p className="text-xl font-semibold mb-2">No orders yet</p>
-              <p className="text-sm">Orders will appear here once customers make purchases</p>
+              <p className="text-sm">Les commandes apparaitront ici après avoir fait des commandes</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -73,17 +73,24 @@ function OrdersPage() {
                         </td>
 
                         <td>
-                          <div className="font-medium">{order.shippingAddress.nomComplet}</div>
-                          <div className="text-sm opacity-60">
-                            {order.shippingAddress.ville}, {order.shippingAddress.commune}
-                          </div>
-                          <div className="text-sm opacity-60">
-                            {order.shippingAddress.quartier}, {order.shippingAddress.avenue}, 
-                          </div>
-                          <div className="text-sm opacity-60">
-                            {order.shippingAddress.reference}, {order.shippingAddress.numeroTelephone}, 
-                          </div>
-                        </td>
+  <div className="max-w-70 overflow-x-auto whitespace-nowrap pr-2">
+    <div className="font-medium">
+      {order.shippingAddress.nomComplet}
+    </div>
+
+    <div className="text-sm opacity-60">
+      {order.shippingAddress.ville}, {order.shippingAddress.commune}
+    </div>
+
+    <div className="text-sm opacity-60">
+      {order.shippingAddress.quartier}, {order.shippingAddress.avenue}
+    </div>
+
+    <div className="text-sm opacity-60">
+      {order.shippingAddress.reference}, {order.shippingAddress.numeroTelephone}
+    </div>
+  </div>
+</td>
 
                         <td>
                           <div className="font-medium">{totalQuantity} items</div>
