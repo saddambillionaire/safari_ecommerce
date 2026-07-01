@@ -73,7 +73,7 @@ function OrdersPage() {
                         </td>
 
                         <td>
-  <div className="max-w-[260px] overflow-x-auto whitespace-nowrap pr-2 scrollbar-thin scrollbar-thumb-base-content/20 scrollbar-track-base-content/5">
+  <div className="flex gap-2" scrolling="yes">
     <div className="font-medium">
       {order.shippingAddress.nomComplet}
     </div>
