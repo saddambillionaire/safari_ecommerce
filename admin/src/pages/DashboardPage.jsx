@@ -91,10 +91,10 @@ function DashboardPage() {
       </div>
 
       {/* ================= TABLE ================= */}
-      <div className="card bg-base-100 shadow-xl">
+      <div className="rounded-2xl  border-[#1DB954]">
 
         <div className="card-body">
-          <div className="border-b border-[#1DB954] pb-3 mb-2">
+          <div className="border-b  pb-3 mb-2">
   <h2 className="card-title">Commandes récentes</h2>
 </div >
 
@@ -107,8 +107,8 @@ function DashboardPage() {
               Aucune commande
             </div>
           ) : (
-            <div className="overflow-x-auto border-[#1DB954] " >
-              <table className="table border-[#1DB954] table-zebra w-full">
+            <div className="overflow-x-auto  " >
+              <table className="table border-[#1DB954] ">
 
                 <thead>
                   <tr>
