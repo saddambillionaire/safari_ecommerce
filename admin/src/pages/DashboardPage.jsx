@@ -30,7 +30,6 @@ function DashboardPage() {
         ? <span className="loading loading-spinner loading-xs" />
         : `$${statsData?.totalRevenue?.toFixed(2) || 0}`,
       icon: FaMoneyBillWave,
-      trend: "+12% vs mois dernier",
       iconBg: "bg-green-50",
       iconColor: "text-green-600",
     },
@@ -40,7 +39,6 @@ function DashboardPage() {
         ? <span className="loading loading-spinner loading-xs" />
         : statsData?.totalOrders || 0,
       icon: FiShoppingBag,
-      trend: "+5% cette semaine",
       iconBg: "bg-blue-50",
       iconColor: "text-blue-600",
     },
@@ -50,7 +48,6 @@ function DashboardPage() {
         ? <span className="loading loading-spinner loading-xs" />
         : statsData?.totalCustomers || 0,
       icon: FaUsers,
-      trend: "+3 nouveaux aujourd’hui",
       iconBg: "bg-purple-50",
       iconColor: "text-purple-600",
     },
@@ -60,7 +57,6 @@ function DashboardPage() {
         ? <span className="loading loading-spinner loading-xs" />
         : statsData?.totalProducts || 0,
       icon: FaBoxOpen,
-      trend: "Catalogue complet",
       iconBg: "bg-amber-50",
       iconColor: "text-amber-600",
     },
@@ -68,7 +64,7 @@ function DashboardPage() {
 
   return (
     <div className="bg-white min-h-screen">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 space-y-6">
         {/* ================= STATS ================= */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {statsCards.map((stat) => {
@@ -77,28 +73,24 @@ function DashboardPage() {
             return (
               <div
                 key={stat.name}
-                className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm"
+                className="rounded-2xl border border-gray-200 bg-white p-3.5 shadow-sm"
               >
-                <div className="flex items-center gap-4">
-                  {/* Circular icon */}
+                <div className="flex items-center gap-3">
+                  {/* Circular icon (smaller) */}
                   <div
-                    className={`w-12 h-12 rounded-full flex items-center justify-center ${stat.iconBg}`}
+                    className={`w-9 h-9 rounded-full flex items-center justify-center ${stat.iconBg}`}
                   >
-                    <Icon className={`w-5 h-5 ${stat.iconColor}`} />
+                    <Icon className={`w-4 h-4 ${stat.iconColor}`} />
                   </div>
 
                   <div className="flex-1">
-                    <p className="text-xs uppercase tracking-wide text-gray-500">
+                    <p className="text-[11px] uppercase tracking-wide text-gray-500">
                       {stat.name}
                     </p>
-                    <p className="text-xl font-semibold text-gray-900 mt-0.5">
+                    <p className="text-base font-semibold text-gray-900 mt-0.5">
                       {stat.value}
                     </p>
                   </div>
-                </div>
-
-                <div className="mt-3">
-                  <p className="text-xs text-gray-500">{stat.trend}</p>
                 </div>
               </div>
             );
@@ -108,8 +100,8 @@ function DashboardPage() {
         {/* ================= TABLE ================= */}
         <div className="rounded-2xl border border-gray-200 bg-white shadow-sm">
           {/* Header */}
-          <div className="px-5 py-4 border-b border-gray-200">
-            <h2 className="text-base font-semibold text-gray-900">
+          <div className="px-4 py-3 border-b border-gray-200">
+            <h2 className="text-sm font-semibold text-gray-900">
               Commandes récentes
             </h2>
             <p className="text-xs text-gray-500 mt-0.5">
@@ -119,18 +111,18 @@ function DashboardPage() {
 
           {/* Content */}
           {ordersLoading ? (
-            <div className="flex justify-center py-10">
+            <div className="flex justify-center py-8">
               <span className="loading loading-spinner loading-lg" />
             </div>
           ) : recentOrders.length === 0 ? (
-            <div className="text-center py-10 text-sm text-gray-500">
+            <div className="text-center py-8 text-sm text-gray-500">
               Aucune commande pour le moment.
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="table w-full">
                 <thead>
-                  <tr className="text-xs uppercase tracking-wide text-gray-500">
+                  <tr className="text-[11px] uppercase tracking-wide text-gray-500">
                     <th className="font-medium text-left">ID</th>
                     <th className="font-medium text-left">Client</th>
                     <th className="font-medium text-left">Articles</th>
@@ -145,20 +137,20 @@ function DashboardPage() {
                       key={order._id}
                       className="border-t border-gray-100 hover:bg-gray-50"
                     >
-                      <td className="py-3 pr-3 text-sm font-medium text-gray-900">
+                      <td className="py-2.5 pr-3 text-xs font-medium text-gray-900">
                         #{order._id.slice(-8).toUpperCase()}
                       </td>
 
-                      <td className="py-3 pr-3">
-                        <div className="text-sm font-medium text-gray-900">
+                      <td className="py-2.5 pr-3">
+                        <div className="text-xs font-medium text-gray-900">
                           {order.shippingAddress.fullName}
                         </div>
-                        <div className="text-xs text-gray-500">
+                        <div className="text-[11px] text-gray-500">
                           {order.orderItems.length} article(s)
                         </div>
                       </td>
 
-                      <td className="py-3 pr-3 text-sm text-gray-700">
+                      <td className="py-2.5 pr-3 text-xs text-gray-700">
                         {order.orderItems[0]?.name}
                         {order.orderItems.length > 1 && (
                           <span className="text-gray-500">
@@ -168,13 +160,13 @@ function DashboardPage() {
                         )}
                       </td>
 
-                      <td className="py-3 pr-3 text-sm font-semibold text-gray-900">
+                      <td className="py-2.5 pr-3 text-xs font-semibold text-gray-900">
                         ${order.totalPrice.toFixed(2)}
                       </td>
 
-                      <td className="py-3 pr-3">
+                      <td className="py-2.5 pr-3">
                         <div
-                          className={`badge text-xs ${getOrderStatusBadge(
+                          className={`badge text-[11px] ${getOrderStatusBadge(
                             order.status
                           )}`}
                         >
@@ -182,7 +174,7 @@ function DashboardPage() {
                         </div>
                       </td>
 
-                      <td className="py-3 pr-3 text-xs text-gray-500">
+                      <td className="py-2.5 pr-3 text-[11px] text-gray-500">
                         {formatDate(order.createdAt)}
                       </td>
                     </tr>
