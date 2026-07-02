@@ -178,7 +178,7 @@ function DashboardPage() {
                       <td className="py-2.5 pr-3">
                         {/* Soft status badges, similar to icon backgrounds */}
                         <div
-                          className={`badge text-[11px] ${getSoftStatusBadge(
+                          className={`badge text-[11px] ${getOrderStatusBadge(
                             order.status
                           )}`}
                         >
@@ -206,14 +206,10 @@ export function getOrderStatusBadge(status) {
   switch (status.toLowerCase()) {
     case "pending":
       return "bg-amber-100 text-amber-700 border-0";
-    case "confirmed":
-      return "bg-blue-100 text-blue-700 border-0";
     case "shipped":
       return "bg-indigo-100 text-indigo-700 border-0";
     case "delivered":
       return "bg-green-100 text-green-700 border-0";
-    case "cancelled":
-      return "bg-gray-100 text-gray-600 border-0";
     default:
       return "bg-gray-100 text-gray-600 border-0";
   }
