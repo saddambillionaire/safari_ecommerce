@@ -91,82 +91,80 @@ function DashboardPage() {
       </div>
 
       {/* ================= TABLE ================= */}
-      <div className="rounded-2xl  border-[#1DB954]">
-
-        <div className="card-body">
-          <div className="border-b  pb-3 mb-2">
-  <h2 className="card-title">Commandes récentes</h2>
-</div >
-
-          {ordersLoading ? (
-            <div className="flex justify-center py-6">
-              <span className="loading loading-spinner loading-lg" />
-            </div>
-          ) : recentOrders.length === 0 ? (
-            <div className="text-center py-6 opacity-60">
-              Aucune commande
-            </div>
-          ) : (
-            <div className="overflow-x-auto  " >
-              <table className="table border-[#1DB954] ">
-
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Client</th>
-                    <th>Articles</th>
-                    <th>Montant</th>
-                    <th>Statut</th>
-                    <th>Date</th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {recentOrders.map((order) => (
-                    <tr key={order._id}>
-
-                      <td className="font-medium">
-                        #{order._id.slice(-8).toUpperCase()}
-                      </td>
-
-                      <td>
-                        <div className="font-medium">
-                          {order.shippingAddress.fullName}
-                        </div>
-                        <div className="text-sm opacity-60">
-                          {order.orderItems.length} article(s)
-                        </div>
-                      </td>
-
-                      <td className="text-sm">
-                        {order.orderItems[0]?.name}
-                        {order.orderItems.length > 1 &&
-                          ` +${order.orderItems.length - 1}`}
-                      </td>
-
-                      <td className="font-semibold">
-                        ${order.totalPrice.toFixed(2)}
-                      </td>
-
-                      <td>
-                        <div className={`badge ${getOrderStatusBadge(order.status)}`}>
-                          {capitalizeText(order.status)}
-                        </div>
-                      </td>
-
-                      <td className="text-sm opacity-60">
-                        {formatDate(order.createdAt)}
-                      </td>
-
-                    </tr>
-                  ))}
-                </tbody>
-
-              </table>
-            </div>
-          )}
-        </div>
+      {/* ================= TABLE ================= */}
+<div className="rounded-2xl p-[1px] bg-[#1DB954]">
+  <div className="card bg-base-100 shadow-xl rounded-2xl">
+    <div className="card-body">
+      <div className="border-b border-base-300 pb-3 mb-2">
+        <h2 className="card-title">Commandes récentes</h2>
       </div>
+
+      {ordersLoading ? (
+        <div className="flex justify-center py-6">
+          <span className="loading loading-spinner loading-lg" />
+        </div>
+      ) : recentOrders.length === 0 ? (
+        <div className="text-center py-6 opacity-60">
+          Aucune commande
+        </div>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Client</th>
+                <th>Articles</th>
+                <th>Montant</th>
+                <th>Statut</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {recentOrders.map((order) => (
+                <tr key={order._id}>
+                  <td className="font-medium">
+                    #{order._id.slice(-8).toUpperCase()}
+                  </td>
+
+                  <td>
+                    <div className="font-medium">
+                      {order.shippingAddress.fullName}
+                    </div>
+                    <div className="text-sm opacity-60">
+                      {order.orderItems.length} article(s)
+                    </div>
+                  </td>
+
+                  <td className="text-sm">
+                    {order.orderItems[0]?.name}
+                    {order.orderItems.length > 1 &&
+                      ` +${order.orderItems.length - 1}`}
+                  </td>
+
+                  <td className="font-semibold">
+                    ${order.totalPrice.toFixed(2)}
+                  </td>
+
+                  <td>
+                    <div className={`badge ${getOrderStatusBadge(order.status)}`}>
+                      {capitalizeText(order.status)}
+                    </div>
+                  </td>
+
+                  <td className="text-sm opacity-60">
+                    {formatDate(order.createdAt)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  </div>
+</div>
 
     </div>
   );
