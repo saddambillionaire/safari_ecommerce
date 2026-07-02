@@ -40,23 +40,29 @@ function Sidebar() {
           })}
         </ul>
 
-        <div className="p-4 w-full border-t border-base-300 is-drawer-close:hidden border-[#1DB954]">
-          <div className="flex items-center gap-3">
-            <div className="avatar shrink-0">
-              <img src={user?.imageUrl} alt={user?.name} className="w-10 h-10 rounded-full" />
-            </div>
+       <div className="p-[1px] rounded-2xl bg-[#1DB954] is-drawer-close:hidden">
+  <div className="bg-base-100 rounded-2xl px-4 py-3">
+    <div className="flex items-center gap-3">
+      <div className="avatar shrink-0">
+        <img
+          src={user?.imageUrl}
+          alt={user?.name}
+          className="w-9 h-9 rounded-full object-cover"
+        />
+      </div>
 
-            <div className="flex-1 min-w-0 is-drawer-close:hidden">
-              <p className="text-sm font-semibold truncate">
-                {user?.firstName} {user?.lastName}
-              </p>
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-semibold truncate leading-5">
+          {user?.firstName} {user?.lastName}
+        </p>
 
-              <p className="text-xs opacity-60 truncate">
-                {user?.emailAddresses?.[0]?.emailAddress}
-              </p>
-            </div>
-          </div>
-        </div>
+        <p className="text-xs opacity-60 truncate mt-0.5">
+          {user?.emailAddresses?.[0]?.emailAddress}
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
       </div>
     </div>
   );
