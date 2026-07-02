@@ -6,15 +6,28 @@ export const capitalizeText = (text) => {
 export const getOrderStatusBadge = (status) => {
   switch (status?.toLowerCase()) {
     case "delivered":
-      return "badge-success";
+      return "bg-green-50 text-green-700 border-0";
     case "shipped":
-      return "badge-info";
+      return "bg-blue-50 text-blue-700 border-0";
     case "pending":
-      return "badge-warning";
+      return "bg-amber-50 text-amber-700 border-0";
     default:
-      return "badge-ghost";
+      return "bg-gray-50 text-gray-600 border-0";
   }
 };
+
+// export const getOrderStatusBadge = (status) => {
+//   switch (status?.toLowerCase()) {
+//     case "delivered":
+//       return "badge-success";
+//     case "shipped":
+//       return "badge-info";
+//     case "pending":
+//       return "badge-warning";
+//     default:
+//       return "badge-ghost";
+//   }
+// };
 
 export const getStockStatusBadge = (stock) => {
   if (stock === 0) return { text: "En rupture de stock", class: "badge-error" };
