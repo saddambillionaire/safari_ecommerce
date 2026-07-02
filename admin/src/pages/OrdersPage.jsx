@@ -89,19 +89,11 @@ function OrdersPage() {
 
                         <td className="py-2.5 pr-3">
                           <div className="text-xs font-medium text-gray-900">
-                            {order.shippingAddress.nomComplet}
+                            {order.shippingAddress.fullName}
                           </div>
                           <div className="text-[11px] text-gray-500">
-                            {order.shippingAddress.ville},{" "}
-                            {order.shippingAddress.commune}
-                          </div>
-                          <div className="text-[11px] text-gray-500">
-                            {order.shippingAddress.quartier},{" "}
-                            {order.shippingAddress.avenue}
-                          </div>
-                          <div className="text-[11px] text-gray-500">
-                            {order.shippingAddress.reference},{" "}
-                            {order.shippingAddress.numeroTelephone}
+                            {order.shippingAddress.city},{" "}
+                            {order.shippingAddress.state}
                           </div>
                         </td>
 
@@ -125,13 +117,18 @@ function OrdersPage() {
                         </td>
 
                         <td className="py-2.5 pr-3">
-                          <div
-                            className={`badge text-[11px] ${getOrderStatusBadge(
-                              order.status
-                            )}`}
+                          <select
+                            value={order.status}
+                            onChange={(e) =>
+                              handleStatusChange(order._id, e.target.value)
+                            }
+                            className="select select-sm bg-white border border-gray-200 text-[11px] text-gray-700"
+                            disabled={updateStatusMutation.isPending}
                           >
-                            {capitalizeText(order.status)}
-                          </div>
+                            <option value="pending">Pending</option>
+                            <option value="shipped">Shipped</option>
+                            <option value="delivered">Delivered</option>
+                          </select>
                         </td>
 
                         <td className="py-2.5 pr-3 text-[11px] text-gray-500">
@@ -183,8 +180,8 @@ export default OrdersPage;
 //     <div className="space-y-6">
 //       {/* HEADER */}
 //       <div className="flex flex-col gap-2">
-//         <h1 className="text-2xl font-bold">Commandes</h1>
-//         <p className="text-base-content/70">Gérer les commandes des clients</p>
+//         <h1 className="text-2xl font-bold">Orders</h1>
+//         <p className="text-base-content/70">Manage customer orders</p>
 //       </div>
 
 //       {/* ORDERS TABLE */}
@@ -196,19 +193,19 @@ export default OrdersPage;
 //             </div>
 //           ) : orders.length === 0 ? (
 //             <div className="text-center py-12 text-base-content/60">
-//               <p className="text-xl font-semibold mb-2">Pas de commandes encore disponibles</p>
-//               <p className="text-sm">Les commandes apparaitront ici après avoir fait des commandes</p>
+//               <p className="text-xl font-semibold mb-2">No orders yet</p>
+//               <p className="text-sm">Orders will appear here once customers make purchases</p>
 //             </div>
 //           ) : (
 //             <div className="overflow-x-auto">
 //               <table className="table">
 //                 <thead>
 //                   <tr>
-//                     <th>ID commande</th>
-//                     <th>Client</th>
-//                     <th>Articles</th>
+//                     <th>Order ID</th>
+//                     <th>Customer</th>
+//                     <th>Items</th>
 //                     <th>Total</th>
-//                     <th>Etat</th>
+//                     <th>Status</th>
 //                     <th>Date</th>
 //                   </tr>
 //                 </thead>
@@ -227,24 +224,11 @@ export default OrdersPage;
 //                         </td>
 
 //                         <td>
-//   <div className="flex flex-col gap-2" scro>
-//     <div className="font-medium">
-//       {order.shippingAddress.nomComplet}
-//     </div>
-
-//     <div className="text-sm opacity-60">
-//       {order.shippingAddress.ville}, {order.shippingAddress.commune}
-//     </div>
-
-//     <div className="text-sm opacity-60">
-//       {order.shippingAddress.quartier}, {order.shippingAddress.avenue}
-//     </div>
-//     <div className="text-sm opacity-60">
-//       {order.shippingAddress.reference}, {order.shippingAddress.numeroTelephone}
-//     </div>
-   
-//   </div>
-// </td>
+//                           <div className="font-medium">{order.shippingAddress.fullName}</div>
+//                           <div className="text-sm opacity-60">
+//                             {order.shippingAddress.city}, {order.shippingAddress.state}
+//                           </div>
+//                         </td>
 
 //                         <td>
 //                           <div className="font-medium">{totalQuantity} items</div>
