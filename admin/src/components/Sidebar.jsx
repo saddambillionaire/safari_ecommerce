@@ -1,7 +1,7 @@
 import { useUser } from "@clerk/clerk-react";
-import { ShoppingBagIcon } from "lucide-react";
 import { Link, useLocation } from "react-router";
 import { NAVIGATION } from "./Navbar";
+import { IoStorefront } from "react-icons/io5";
 
 function Sidebar() {
   const location = useLocation();
@@ -42,7 +42,7 @@ function Sidebar() {
           })}
         </ul>
 
-       <div className="mx-3 mt-2 mb-4 p-[1px] rounded-2xl bg-[#1DB954] is-drawer-close:hidden">
+       <div className="mx-3 mt-2 mb-4 p-px rounded-2xl bg-[#1DB954] is-drawer-close:hidden">
   <div className="bg-base-100 rounded-2xl px-4 py-3">
     <div className="flex items-center gap-3">
       <div className="avatar shrink-0">
