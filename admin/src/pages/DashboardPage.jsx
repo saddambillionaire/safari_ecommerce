@@ -67,9 +67,12 @@ function DashboardPage() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 space-y-6">
         {/* Intro text */}
         <div>
-          <p className="text-sm text-gray-600">
-            Bienvenue sur votre tableau de bord. Vous trouverez ci-dessous un
-            aperçu de l’activité récente de votre boutique.
+          <p className="text-base sm:text-lg font-semibold text-gray-900">
+            Bienvenue sur votre tableau de bord.
+          </p>
+          <p className="text-sm text-gray-600 mt-1">
+            Vous trouverez ci-dessous un aperçu de l’activité récente de votre
+            boutique.
           </p>
         </div>
 
@@ -84,7 +87,7 @@ function DashboardPage() {
                 className="rounded-2xl border border-gray-200 bg-white p-3.5 shadow-sm"
               >
                 <div className="flex items-center gap-3">
-                  {/* Circular icon (smaller) */}
+                  {/* Circular icon */}
                   <div
                     className={`w-9 h-9 rounded-full flex items-center justify-center ${stat.iconBg}`}
                   >
@@ -113,7 +116,7 @@ function DashboardPage() {
               Commandes récentes
             </h2>
             <p className="text-xs text-gray-500 mt-0.5">
-              Les dernières commandes passées sur la plateforme.
+              Les 5 dernières commandes passées sur la plateforme.
             </p>
           </div>
 
@@ -151,7 +154,7 @@ function DashboardPage() {
 
                       <td className="py-2.5 pr-3">
                         <div className="text-xs font-medium text-gray-900">
-                          {order.shippingAddress.nomComplet}
+                          {order.shippingAddress.fullName}
                         </div>
                         <div className="text-[11px] text-gray-500">
                           {order.orderItems.length} article(s)
@@ -173,11 +176,11 @@ function DashboardPage() {
                       </td>
 
                       <td className="py-2.5 pr-3">
-                        {/* Softer status badges */}
+                        {/* Soft status badges, similar to icon backgrounds */}
                         <div
-                          className={`badge text-[11px] ${getOrderStatusBadge(
+                          className={`badge text-[11px] ${getSoftStatusBadge(
                             order.status
-                          )} opacity-90`}
+                          )}`}
                         >
                           {capitalizeText(order.status)}
                         </div>
@@ -196,6 +199,24 @@ function DashboardPage() {
       </div>
     </div>
   );
+}
+
+// Helper to get soft status badge classes
+function getSoftStatusBadge(status) {
+  switch (status.toLowerCase()) {
+    case "pending":
+      return "badge-amber-100 text-amber-700";
+    case "confirmed":
+      return "badge-blue-100 text-blue-700";
+    case "shipped":
+      return "badge-indigo-100 text-indigo-700";
+    case "delivered":
+      return "badge-green-100 text-green-700";
+    case "cancelled":
+      return "badge-gray-100 text-gray-700";
+    default:
+      return "badge-gray-100 text-gray-700";
+  }
 }
 
 export default DashboardPage;
