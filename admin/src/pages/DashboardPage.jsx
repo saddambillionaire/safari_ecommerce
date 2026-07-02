@@ -28,26 +28,26 @@ function DashboardPage() {
     {
       name: "Revenus",
       value: statsLoading
-        ? "..."
+        ? <span className="loading loading-spinner loading-xs" />
         : `$${statsData?.totalRevenue?.toFixed(2) || 0}`,
       icon: FaMoneyBillWave,
       color: "#22c55e",
     },
     {
       name: "Commandes",
-      value: statsLoading ? "..." : statsData?.totalOrders || 0,
+      value: statsLoading ? <span className="loading loading-spinner loading-xs" /> : statsData?.totalOrders || 0,
       icon: FiShoppingBag, // ✅ improved cart icon
       color: "#3b82f6",
     },
     {
       name: "Clients",
-      value: statsLoading ? "..." : statsData?.totalCustomers || 0,
+      value: statsLoading ? <span className="loading loading-spinner loading-xs" /> : statsData?.totalCustomers || 0,
       icon: FaUsers,
       color: "#a855f7",
     },
     {
       name: "Produits",
-      value: statsLoading ? "..." : statsData?.totalProducts || 0,
+      value: statsLoading ? <span className="loading loading-spinner loading-xs" /> : statsData?.totalProducts || 0,
       icon: FaBoxOpen,
       color: "#f59e0b",
     },
@@ -65,7 +65,7 @@ function DashboardPage() {
           return (
             <div
               key={stat.name}
-              className="card bg-base-100 border-[#1DB954] border shadow-sm p-4 flex items-center justify-between"
+              className="card bg-base-100 border-[#1DB954] border shadow-sm p-4 flex items-start justify-between"
             >
               <div className="flex items-center">
 
@@ -90,9 +90,9 @@ function DashboardPage() {
         })}
       </div>
 
+    
       {/* ================= TABLE ================= */}
-      {/* ================= TABLE ================= */}
-<div className="rounded-2xl p-[1px] bg-[#1DB954]">
+<div className="rounded-2xl p-px bg-[#1DB954]">
   <div className="card bg-base-100 shadow-xl rounded-2xl">
     <div className="card-body">
       <div className="border-b border-base-300 pb-3 mb-2">

@@ -40,7 +40,7 @@ function Sidebar() {
           })}
         </ul>
 
-        <div className="p-4 w-full">
+        <div className="p-4 w-full border-t border-base-300 is-drawer-close:hidden border-[#1DB954]">
           <div className="flex items-center gap-3">
             <div className="avatar shrink-0">
               <img src={user?.imageUrl} alt={user?.name} className="w-10 h-10 rounded-full" />
