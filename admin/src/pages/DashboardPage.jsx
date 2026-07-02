@@ -65,6 +65,14 @@ function DashboardPage() {
   return (
     <div className="bg-white min-h-screen">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+        {/* Intro text */}
+        <div>
+          <p className="text-sm text-gray-600">
+            Bienvenue sur votre tableau de bord. Vous trouverez ci-dessous un
+            aperçu de l’activité récente de votre boutique.
+          </p>
+        </div>
+
         {/* ================= STATS ================= */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {statsCards.map((stat) => {
@@ -105,7 +113,7 @@ function DashboardPage() {
               Commandes récentes
             </h2>
             <p className="text-xs text-gray-500 mt-0.5">
-              Les 5 dernières commandes passées sur la plateforme.
+              Les dernières commandes passées sur la plateforme.
             </p>
           </div>
 
@@ -143,7 +151,7 @@ function DashboardPage() {
 
                       <td className="py-2.5 pr-3">
                         <div className="text-xs font-medium text-gray-900">
-                          {order.shippingAddress.fullName}
+                          {order.shippingAddress.nomComplet}
                         </div>
                         <div className="text-[11px] text-gray-500">
                           {order.orderItems.length} article(s)
@@ -165,10 +173,11 @@ function DashboardPage() {
                       </td>
 
                       <td className="py-2.5 pr-3">
+                        {/* Softer status badges */}
                         <div
                           className={`badge text-[11px] ${getOrderStatusBadge(
                             order.status
-                          )}`}
+                          )} opacity-90`}
                         >
                           {capitalizeText(order.status)}
                         </div>
