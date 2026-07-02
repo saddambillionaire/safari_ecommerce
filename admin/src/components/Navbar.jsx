@@ -6,12 +6,11 @@ import { useLocation } from "react-router";
 
 // Icons used in the navigation menu and navbar
 import {
-  ClipboardListIcon,
-  HomeIcon,
-  PanelLeftIcon,
-  ShoppingBagIcon,
-  UsersIcon,
-} from "lucide-react";
+  IoGrid,
+  IoCube,
+  IoReceipt,
+  IoPeople,
+} from "react-icons/io5";
 
 // Navigation links used by the sidebar and navbar title
 // eslint-disable-next-line
@@ -19,25 +18,24 @@ export const NAVIGATION = [
   {
     name: "Dashboard",
     path: "/dashboard",
-    icon: <HomeIcon className="size-5" />,
+    icon: <IoGrid size={20} />,
   },
   {
     name: "Products",
     path: "/products",
-    icon: <ShoppingBagIcon className="size-5" />,
+    icon: <IoCube size={20} />,
   },
   {
     name: "Orders",
     path: "/orders",
-    icon: <ClipboardListIcon className="size-5" />,
+    icon: <IoReceipt size={20} />,
   },
   {
     name: "Customers",
     path: "/customers",
-    icon: <UsersIcon className="size-5" />,
+    icon: <IoPeople size={20} />,
   },
 ];
-
 function Navbar() {
   // Gives access to the current route information
   const location = useLocation();
