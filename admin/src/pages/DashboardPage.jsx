@@ -116,7 +116,7 @@ function DashboardPage() {
               Commandes récentes
             </h2>
             <p className="text-xs text-gray-500 mt-0.5">
-              Les 5 dernières commandes passées sur la plateforme.
+              Les dernières commandes passées sur la plateforme.
             </p>
           </div>
 
@@ -154,7 +154,7 @@ function DashboardPage() {
 
                       <td className="py-2.5 pr-3">
                         <div className="text-xs font-medium text-gray-900">
-                          {order.shippingAddress.fullName}
+                          {order.shippingAddress.nomComplet}
                         </div>
                         <div className="text-[11px] text-gray-500">
                           {order.orderItems.length} article(s)
@@ -199,20 +199,6 @@ function DashboardPage() {
       </div>
     </div>
   );
-}
-
-// utils.ts
-export function getOrderStatusBadge(status) {
-  switch (status.toLowerCase()) {
-    case "pending":
-      return "bg-amber-100 text-amber-700 border-0";
-    case "shipped":
-      return "bg-indigo-100 text-indigo-700 border-0";
-    case "delivered":
-      return "bg-green-100 text-green-700 border-0";
-    default:
-      return "bg-gray-100 text-gray-600 border-0";
-  }
 }
 
 export default DashboardPage;
