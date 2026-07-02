@@ -108,7 +108,7 @@ function DashboardPage() {
             </div>
           ) : (
             <div className="overflow-x-auto border-[#1DB954] " >
-              <table className="table">
+              <table className="table border-[#1DB954] table-zebra w-full">
 
                 <thead>
                   <tr>
